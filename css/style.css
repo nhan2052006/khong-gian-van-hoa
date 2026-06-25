@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+:root {
+  --patriot-red: #D62D20;
+  --patriot-red-dark: #A82015;
+  --patriot-yellow: #FFD700;
+  --patriot-yellow-dark: #D4B200;
+  --stone-bg: #FDFCFA; /* Màu kem đá cổ điển nhã nhặn trang nghiêm */
+  --vietnam-font: 'Be Vietnam Pro', sans-serif;
+}
+
+body {
+  font-family: var(--vietnam-font);
+  background-color: var(--stone-bg);
+  color: #1A1A1A;
+  scroll-behavior: smooth;
+}
+
+/* Ngôi sao vàng tỏa sáng hào quang */
+.star-glow {
+  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.5));
+  animation: pulse-glow 2.5s infinite alternate;
+}
+
+@keyframes pulse-glow {
+  0% {
+    filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.3));
+    transform: scale(1);
+  }
+  100% {
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+    transform: scale(1.05);
+  }
+}
+
+/* Glassmorphism cho Card thông tin */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(220, 220, 220, 0.4);
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px 0 rgba(0, 0, 0, 0.06);
+  border-color: rgba(214, 45, 32, 0.2);
+}
+
+/* Custom Dòng thời gian Timeline */
+.timeline-container::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  background: linear-gradient(180deg, var(--patriot-red) 0%, var(--patriot-yellow) 100%);
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  margin-left: -2px;
+}
+
+@media (max-width: 768px) {
+  .timeline-container::after {
+    left: 20px;
+  }
+}
+
+.timeline-item {
+  padding: 10px 40px;
+  position: relative;
+  background-color: inherit;
+  width: 50%;
+}
+
+@media (max-width: 768px) {
+  .timeline-item {
+    width: 100%;
+    padding-left: 50px;
+    padding-right: 25px;
+  }
+}
+
+.timeline-item::after {
+  content: '★';
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  right: -14px;
+  background-color: white;
+  border: 2px solid var(--patriot-red);
+  top: 15px;
+  border-radius: 50%;
+  z-index: 1;
+  text-align: center;
+  line-height: 24px;
+  color: var(--patriot-red);
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .timeline-item::after {
+    left: 6px;
+    top: 15px;
+  }
+}
+
+.timeline-item.left {
+  left: 0;
+}
+
+.timeline-item.right {
+  left: 50%;
+}
+
+@media (max-width: 768px) {
+  .timeline-item.right {
+    left: 0%;
+  }
+}
+
+.timeline-item.left::after {
+  /* alignment for left side timeline dot */
+}
+
+.timeline-item.right::after {
+  left: -14px;
+}
+
+@media (max-width: 768px) {
+  .timeline-item.right::after {
+    left: 6px;
+  }
+}
+
+.timeline-item.active::after {
+  background-color: var(--patriot-yellow);
+  color: var(--patriot-red);
+  border-color: var(--patriot-yellow);
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+}
+
+/* Nút bấm Patriotic */
+.btn-patriot-primary {
+  background-color: var(--patriot-red);
+  color: white;
+  border: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-patriot-primary:hover {
+  background-color: var(--patriot-red-dark);
+  border-color: var(--patriot-yellow);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(214, 45, 32, 0.2);
+}
+
+.btn-patriot-secondary {
+  background-color: white;
+  color: var(--patriot-red);
+  border: 1px solid var(--patriot-red);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-patriot-secondary:hover {
+  background-color: rgba(214, 45, 32, 0.05);
+  transform: translateY(-2px);
+}
+
+.btn-patriot-yellow {
+  background-color: var(--patriot-yellow);
+  color: #1A1A1A;
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-patriot-yellow:hover {
+  background-color: var(--patriot-yellow-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+/* Scrollbar Custom */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--stone-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(214, 45, 32, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--patriot-red);
+}
