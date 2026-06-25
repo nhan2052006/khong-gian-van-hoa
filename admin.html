@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng Quản Trị - Không Gian Văn Hóa Hồ Chí Minh</title>
+  
+  <!-- Tailwind CSS v4 Play CDN -->
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  
+  <!-- Custom Style Sheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#FDFCFA] text-gray-800 flex flex-col min-h-screen">
+
+  <!-- DÀNH CHO NGƯỜI DÙNG CHƯA ĐĂNG NHẬP (MÀN HÌNH KHÓA) -->
+  <main id="login-section" class="flex-1 flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-tr from-[#E53E3E]/5 to-[#FDFCFA]">
+    <!-- Nền chấm bi/grid chìm -->
+    <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+
+    <div class="max-w-md w-full bg-white rounded-3xl border border-gray-150 shadow-2xl p-8 relative z-10">
+      
+      <!-- Hướng dẫn đăng nhập chạy giả lập (Simulation Helper) -->
+      <div id="simulation-notice" class="hidden mb-6 bg-amber-50 border-l-4 border-[#FFD700] p-4 rounded-r-2xl text-xs text-amber-800">
+        <div class="flex gap-2">
+          <span class="font-extrabold text-sm text-[#D62D20]">ℹ</span>
+          <div>
+            <p class="font-bold text-gray-800 mb-0.5">Chế độ Thử nghiệm Giả lập đang BẬT</p>
+            <p class="mb-1 leading-relaxed">Bạn có thể đăng nhập thử nghiệm ngay mà không cần kết nối Firebase thật:</p>
+            <p class="font-mono bg-white/60 p-1.5 rounded border border-amber-100 flex flex-col gap-0.5">
+              <span><strong>Tài khoản:</strong> admin@chibo.vn</span>
+              <span><strong>Mật khẩu:</strong> chibo12345</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mb-8">
+        <div class="w-14 h-14 bg-[#D62D20] rounded-full flex items-center justify-center mx-auto mb-4 star-glow shadow-lg">
+          <span class="text-[#FFD700] text-3xl font-extrabold">★</span>
+        </div>
+        <h2 class="text-xl md:text-2xl font-black text-gray-800">QUẢN TRỊ CHI BỘ</h2>
+        <p class="text-xs text-gray-500 font-semibold tracking-wide uppercase mt-1">Hệ Thống Không Gian Văn Hóa Hồ Chí Minh</p>
+      </div>
+
+      <!-- Form đăng nhập -->
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label for="login-email" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Email Quản trị viên</label>
+          <input 
+            type="email" 
+            id="login-email" 
+            required 
+            placeholder="nhap-email@chibo.vn"
+            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
+          >
+        </div>
+        <div>
+          <label for="login-password" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Mật khẩu</label>
+          <input 
+            type="password" 
+            id="login-password" 
+            required 
+            placeholder="••••••••"
+            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
+          >
+        </div>
+
+        <div id="login-error" class="hidden text-xs text-red-600 font-bold bg-red-50 p-3 rounded-lg border border-red-100">
+          Thông tin đăng nhập không chính xác.
+        </div>
+
+        <button 
+          type="submit" 
+          class="w-full btn-patriot-primary py-3 rounded-xl font-bold text-sm shadow-md cursor-pointer"
+        >
+          Đăng nhập hệ thống
+        </button>
+      </form>
+
+      <div class="mt-6 text-center">
+        <a href="index.html" class="text-xs font-bold text-[#D62D20] hover:text-[#A82015] flex items-center justify-center gap-1">
+          ← Quay lại Trang chủ công khai
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- DÀNH CHO ADMIN ĐÃ ĐĂNG NHẬP (ADMIN DASHBOARD) -->
+  <main id="dashboard-section" class="flex-1 hidden">
+    <!-- Navbar Quản Trị -->
+    <header class="bg-[#D62D20] text-white border-b border-[#FFD700]/30 shadow-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-[#FFD700] rounded-full flex items-center justify-center star-glow shadow">
+            <span class="text-[#D62D20] text-xl font-bold">★</span>
+          </div>
+          <div>
+            <h1 class="text-base font-extrabold uppercase tracking-wider">BẢNG ĐIỀU KHIỂN CHI BỘ</h1>
+            <span id="admin-email-display" class="block text-xs font-semibold text-[#FFD700]">Tài khoản: admin@chibo.vn</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="index.html" target="_blank" class="text-white hover:text-[#FFD700] font-bold text-xs bg-white/10 px-3.5 py-2 rounded-lg transition">
+            Xem Trang Chủ ↗
+          </a>
+          <button 
+            id="btn-logout" 
+            class="bg-white hover:bg-red-50 text-[#D62D20] font-bold text-xs px-3.5 py-2 rounded-lg transition cursor-pointer shadow-sm"
+          >
+            Đăng xuất
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Nội dung chính Dashboard -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      
+      <!-- Lời chào & Chỉ dẫn -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-black text-gray-800">Chào mừng đến với Ban quản trị Chi bộ!</h2>
+        <p class="text-sm text-gray-500 mt-1">Hệ thống quản lý không cần chạm code. Phê duyệt bài viết của quần chúng và cập nhật tủ sách số của Chi bộ.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- CỘT TRÁI: DỰ VÀ DUYỆT BÀI ĐÓNG GÓP (8/12 phần) -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm">
+            <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
+              <div class="flex items-center gap-2">
+                <span class="text-[#D62D20] text-xl">★</span>
+                <h3 class="text-lg font-bold text-gray-800">Duyệt bài viết & Tư liệu mới</h3>
+              </div>
+              <button 
+                onclick="window.location.reload()" 
+                class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
+              >
+                Tải lại danh sách
+              </button>
+            </div>
+
+            <!-- Danh sách bài chờ duyệt -->
+            <div id="pending-contributions-container" class="space-y-4">
+              <!-- Load động qua JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- CỘT PHẢI: THÊM SÁCH ĐIỆN TỬ (5/12 phần) -->
+        <div class="lg:col-span-5">
+          <div class="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm">
+            <div class="flex items-center gap-2 mb-6 pb-3 border-b border-gray-100">
+              <span class="text-[#FFD700] text-xl">★</span>
+              <h3 class="text-lg font-bold text-gray-800">Thêm sách mới vào Tủ sách số</h3>
+            </div>
+
+            <!-- Form thêm sách -->
+            <form id="add-book-form" class="space-y-4">
+              <div>
+                <label for="book-title" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tên tác phẩm / Tên sách <span class="text-[#D62D20]">*</span></label>
+                <input 
+                  type="text" 
+                  id="book-title" 
+                  required 
+                  placeholder="Ví dụ: Lời kêu gọi toàn quốc kháng chiến..."
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
+                >
+              </div>
+              <div>
+                <label for="book-author" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tác giả <span class="text-[#D62D20]">*</span></label>
+                <input 
+                  type="text" 
+                  id="book-author" 
+                  required 
+                  placeholder="Ví dụ: Hồ Chí Minh"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
+                >
+              </div>
+              <div>
+                <label for="book-summary" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Nội dung tóm tắt / Trích đoạn đọc thử <span class="text-[#D62D20]">*</span></label>
+                <textarea 
+                  id="book-summary" 
+                  required 
+                  rows="6"
+                  placeholder="Nhập nội dung trích đoạn nổi bật để độc giả đọc thử..."
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
+                ></textarea>
+              </div>
+
+              <!-- Thông báo sách thêm thành công -->
+              <div id="book-success-alert" class="hidden text-xs text-emerald-700 font-bold bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                Thêm tác phẩm mới vào Tủ sách thành công! Độc giả trang chủ đã có thể xem ngay.
+              </div>
+
+              <button 
+                type="submit" 
+                id="btn-submit-book" 
+                class="w-full btn-patriot-yellow py-3 rounded-xl font-bold text-sm shadow-md cursor-pointer flex items-center justify-center gap-2"
+              >
+                Thêm vào tủ sách
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- KHO LƯU TRỮ TƯ LIỆU CHI BỘ -->
+      <div class="mt-12 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
+        <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
+          <div class="flex items-center gap-2">
+            <span class="text-[#D62D20] text-xl">★</span>
+            <h3 class="text-lg font-bold text-gray-800">Kho Lưu Trữ Tư Liệu Chi Bộ</h3>
+          </div>
+          <button 
+            id="btn-refresh-archive"
+            class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
+          >
+            Tải lại kho lưu trữ
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 mb-6">Danh mục toàn bộ các bài viết có trạng thái đã duyệt đăng (Approved) hoặc từ chối (Rejected). Ban quản trị có thể chỉnh sửa văn bản trực tiếp trong ô và duyệt lại hoặc thu hồi bài viết bất kỳ lúc nào.</p>
+        
+        <div id="archive-contributions-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Load động qua JS -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-100 border-t border-gray-200 py-6 px-4 mt-auto">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-2">
+      <p>© 2026 Không Gian Văn Hóa Hồ Chí Minh. Ban Quản Trị Chi Bộ.</p>
+      <p>Trang quản trị an toàn kết nối qua Firebase Auth & Firestore Bridge.</p>
+    </div>
+  </footer>
+
+  <!-- Admin Main Logic script -->
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>

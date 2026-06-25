@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Không Gian Văn Hóa Hồ Chí Minh - Chi Bộ Điện Tử</title>
+  <meta name="description" content="Trang thông tin, tủ sách số và tư liệu đóng góp về Chủ tịch Hồ Chí Minh phục vụ Chi bộ Đảng và nhân dân.">
+  
+  <!-- Tailwind CSS v4 Play CDN -->
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  
+  <!-- Custom Style Sheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#FDFCFA] text-gray-800 flex flex-col min-h-screen">
+
+  <!-- NAVIGATION BAR -->
+  <nav class="sticky top-0 z-50 bg-[#D62D20] text-white shadow-md border-b border-[#FFD700]/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <!-- Logo Ngôi sao vàng tỏa sáng -->
+          <div class="w-10 h-10 bg-[#FFD700] rounded-full flex items-center justify-center star-glow shadow">
+            <span class="text-[#D62D20] text-2xl font-bold">★</span>
+          </div>
+          <div>
+            <span class="block text-base font-extrabold tracking-wide uppercase">Không Gian Văn Hóa</span>
+            <span class="block text-xs font-semibold text-[#FFD700] tracking-wider uppercase">HỒ CHÍ MINH</span>
+          </div>
+        </div>
+        
+        <!-- Navigation Links (Desktop) -->
+        <div class="hidden md:flex items-center space-x-6">
+          <a href="#" class="text-white hover:text-[#FFD700] font-bold text-sm transition duration-150">Trang chủ</a>
+          <a href="#heritage-timeline" class="text-white hover:text-[#FFD700] font-bold text-sm transition duration-150">Hành trình di sản</a>
+          <a href="#digital-library" class="text-white hover:text-[#FFD700] font-bold text-sm transition duration-150">Tủ sách số</a>
+          <a href="#contribution" class="text-white hover:text-[#FFD700] font-bold text-sm transition duration-150">Gửi đóng góp</a>
+          <a href="#golden-ledger" class="text-white hover:text-[#FFD700] font-bold text-sm transition duration-150">Sổ vàng Chi bộ</a>
+          <a href="admin.html" class="btn-patriot-yellow py-1.5 px-4 rounded-lg text-xs flex items-center gap-1.5 shadow-sm">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            Quản trị viên
+          </a>
+        </div>
+        
+        <!-- Mobile Menu Trigger -->
+        <div class="md:hidden flex items-center">
+          <a href="admin.html" class="btn-patriot-yellow py-1 px-3 rounded-lg text-xs font-bold shadow-sm">
+            Admin
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <header class="relative bg-gradient-to-br from-[#A82015] via-[#D62D20] to-[#E53E3E] text-white py-20 px-4 overflow-hidden border-b-4 border-[#FFD700]">
+    <!-- Nền chấm bi/grid chìm -->
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#FFF_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    
+    <!-- Hào quang trung tâm -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#FFD700]/10 rounded-full blur-3xl -z-0"></div>
+
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+      <div class="w-16 h-16 bg-[#FFD700] rounded-full flex items-center justify-center mx-auto mb-6 star-glow shadow-lg">
+        <span class="text-[#D62D20] text-4xl font-extrabold">★</span>
+      </div>
+      <h1 class="text-3xl md:text-5xl font-black uppercase tracking-wide leading-tight mb-4 text-shadow">
+        Học tập và làm theo tư tưởng, đạo đức, phong cách Hồ Chí Minh
+      </h1>
+      <p class="text-base md:text-lg text-red-100 font-medium max-w-2xl mx-auto mb-8 leading-relaxed">
+        Không gian Văn hóa số - Nơi học tập, tra cứu di sản lịch sử vĩ đại và gửi gắm những cảm nhận sâu sắc của Đảng viên, quần chúng nhân dân thuộc Chi bộ.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="#contribution" class="btn-patriot-yellow px-6 py-3 rounded-xl shadow-lg font-bold flex items-center gap-2">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path></svg>
+          Gửi đóng góp tư liệu
+        </a>
+        <a href="#heritage-timeline" class="bg-transparent hover:bg-white/10 text-white border-2 border-white/80 px-6 py-3 rounded-xl font-bold transition duration-300">
+          Khám phá di sản
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 360° DIGITAL EXHIBITION SECTION -->
+  <section id="exhibition-360" class="py-16 px-4 bg-gradient-to-b from-[#FDFCFA] to-[#F3F2EE] border-b border-gray-150">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="text-[#D62D20] font-extrabold text-sm tracking-widest uppercase block mb-1">Trải Nghiệm Thực Tế Ảo</span>
+        <h2 class="text-2xl md:text-3xl font-black text-gray-800">Triển Lãm Số 360° Không Gian Di Sản</h2>
+        <div class="w-24 h-1 bg-[#D62D20] mx-auto mt-3 rounded-full"></div>
+        <p class="text-gray-500 text-sm mt-3 max-w-lg mx-auto">
+          Tham quan thực tế ảo các địa danh di sản lịch sử của Bác Hồ và không gian trưng bày sách số hóa trực quan.
+        </p>
+      </div>
+
+      <!-- Player Container 16:9 -->
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-red-50/50 p-3 sm:p-4 rounded-3xl border-2 border-[#FFD700] shadow-xl relative overflow-hidden">
+          <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-inner">
+            <iframe 
+              id="exhibition-iframe"
+              src="" 
+              class="w-full h-full border-none"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowfullscreen
+            ></iframe>
+          </div>
+          <!-- Title & Description of active exhibition -->
+          <div class="mt-4 px-2">
+            <h4 id="exhibition-title" class="text-lg font-bold text-gray-800 mb-1">Tiêu đề triển lãm</h4>
+            <p id="exhibition-desc" class="text-sm text-gray-600">Mô tả triển lãm...</p>
+          </div>
+        </div>
+        
+        <!-- Button selectors -->
+        <div class="mt-6 flex flex-wrap justify-center gap-3" id="exhibition-buttons-container">
+          <button 
+            data-key="ben-nha-rong"
+            class="px-5 py-2.5 rounded-xl text-xs font-bold transition duration-300 shadow-sm border border-gray-200 cursor-pointer btn-exhibition"
+          >
+            Bến Nhà Rồng
+          </button>
+          <button 
+            data-key="bao-tang-hcm"
+            class="px-5 py-2.5 rounded-xl text-xs font-bold transition duration-300 shadow-sm border border-gray-200 cursor-pointer btn-exhibition"
+          >
+            Bảo tàng Hồ Chí Minh
+          </button>
+          <button 
+            data-key="thu-vien-so"
+            class="px-5 py-2.5 rounded-xl text-xs font-bold transition duration-300 shadow-sm border border-gray-200 cursor-pointer btn-exhibition"
+          >
+            Không gian sách điện tử
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE SECTION (HÀNH TRÌNH DI SẢN) -->
+  <section id="heritage-timeline" class="py-16 px-4 max-w-7xl mx-auto">
+    <div class="text-center mb-10">
+      <span class="text-[#D62D20] font-extrabold text-sm tracking-widest uppercase block mb-1">Tiến trình Lịch sử</span>
+      <h2 class="text-2xl md:text-3xl font-black text-gray-800">Hành Trình Di Sản Chủ Tịch Hồ Chí Minh</h2>
+      <div class="w-24 h-1 bg-[#D62D20] mx-auto mt-3 rounded-full"></div>
+    </div>
+
+    <!-- Timeline Year Selector (Horizontal scrollable bar) -->
+    <div class="max-w-4xl mx-auto mb-8 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm overflow-x-auto">
+      <div id="timeline-nav" class="flex justify-between items-center min-w-[650px] px-4 py-2">
+        <!-- Javascript renders nodes here -->
+      </div>
+    </div>
+
+    <!-- Timeline Detail Viewer Card -->
+    <div class="max-w-3xl mx-auto">
+      <div id="timeline-content-card" class="bg-white rounded-3xl border border-orange-50/50 shadow-md overflow-hidden transition-all duration-300 relative">
+        <!-- Javascript renders content here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- DIGITAL LIBRARY SECTION (TỦ SÁCH SỐ) -->
+  <section id="digital-library" class="bg-gradient-to-b from-[#FDFCFA] to-[#F3F2EE] py-16 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12">
+        <span class="text-[#D62D20] font-extrabold text-sm tracking-widest uppercase block mb-1">Tài Liệu Nghiên Cứu</span>
+        <h2 class="text-2xl md:text-3xl font-black text-gray-800">Tủ Sách Điện Tử Chi Bộ</h2>
+        <div class="w-24 h-1 bg-[#D62D20] mx-auto mt-3 rounded-full"></div>
+        <p class="text-gray-500 text-sm mt-3 max-w-lg mx-auto">
+          Tổng hợp tác phẩm kinh điển của Bác Hồ và sách tư liệu nghiên cứu đạo đức, lối sống cách mạng phục vụ sinh hoạt Chi bộ.
+        </p>
+      </div>
+
+      <!-- Books Grid -->
+      <div id="books-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <!-- Javascript load dynamic books here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTRIBUTION FORM SECTION (ĐÓNG GÓP TƯ LIỆU) -->
+  <section id="contribution" class="py-16 px-4 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center max-w-6xl mx-auto">
+      
+      <!-- Giới thiệu thông tin đóng góp -->
+      <div class="lg:col-span-5">
+        <span class="text-[#D62D20] font-extrabold text-sm tracking-widest uppercase block mb-1">Tương Tác Quần Chúng</span>
+        <h2 class="text-2xl md:text-3xl font-black text-gray-800 mb-4 leading-tight">Đóng Góp Cảm Nhận & Tư Liệu Về Bác</h2>
+        <p class="text-gray-600 mb-6 leading-relaxed">
+          Mỗi Đảng viên, quần chúng ưu tú có thể gửi những bài viết cảm nhận cá nhân về các tác phẩm của Bác, hiến kế xây dựng Chi bộ, hoặc chia sẻ tư liệu lịch sử hữu ích.
+        </p>
+        <div class="space-y-4">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-red-50 text-[#D62D20] flex items-center justify-center shrink-0 font-bold">1</div>
+            <div>
+              <h5 class="font-bold text-gray-800 text-sm">Gửi thông tin dễ dàng</h5>
+              <p class="text-xs text-gray-500">Điền tên (hoặc ẩn danh), chủ đề và nội dung cảm nghĩ.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-red-50 text-[#D62D20] flex items-center justify-center shrink-0 font-bold">2</div>
+            <div>
+              <h5 class="font-bold text-gray-800 text-sm">Kiểm duyệt nhanh chóng</h5>
+              <p class="text-xs text-gray-500">Ban quản trị Chi bộ nhận bài viết tức thì và duyệt đăng trên Sổ vàng.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-red-50 text-[#D62D20] flex items-center justify-center shrink-0 font-bold">3</div>
+            <div>
+              <h5 class="font-bold text-gray-800 text-sm">Lan tỏa giá trị</h5>
+              <p class="text-xs text-gray-500">Bài viết được duyệt sẽ hiển thị công khai để toàn thể Chi bộ cùng học tập.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form gửi đóng góp -->
+      <div class="lg:col-span-7">
+        <div class="bg-white rounded-3xl p-6 md:p-8 border border-orange-50/50 shadow-lg">
+          <form id="contribution-form" class="space-y-5">
+            <div>
+              <label for="contrib-title" class="block text-xs font-extrabold uppercase text-gray-500 mb-1.5">Chủ đề / Tiêu đề đóng góp <span class="text-[#D62D20]">*</span></label>
+              <input 
+                type="text" 
+                id="contrib-title" 
+                required 
+                placeholder="Ví dụ: Học tập tác phong giản dị của Người..."
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
+              >
+            </div>
+            <div>
+              <label for="contrib-author" class="block text-xs font-extrabold uppercase text-gray-500 mb-1.5">Họ tên người gửi (Để trống nếu muốn Ẩn danh)</label>
+              <input 
+                type="text" 
+                id="contrib-author" 
+                placeholder="Ví dụ: Nguyễn Văn A - Đảng viên Chi bộ 1"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
+              >
+            </div>
+            <div>
+              <label for="contrib-content" class="block text-xs font-extrabold uppercase text-gray-500 mb-1.5">Nội dung cảm nhận / Tư liệu hiến kế <span class="text-[#D62D20]">*</span></label>
+              <textarea 
+                id="contrib-content" 
+                required 
+                rows="5"
+                placeholder="Nhập nội dung chia sẻ chi tiết tại đây..."
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
+              ></textarea>
+            </div>
+            <button 
+              type="submit" 
+              id="btn-submit-contribution" 
+              class="w-full btn-patriot-primary py-3 rounded-xl font-bold text-sm shadow-md cursor-pointer flex items-center justify-center gap-2"
+            >
+              Gửi về Chi bộ
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GOLDEN LEDGER SECTION (SỔ VÀNG CHI BỘ) -->
+  <section id="golden-ledger" class="bg-gradient-to-b from-[#F3F2EE] to-[#FDFCFA] py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="text-[#D62D20] font-extrabold text-sm tracking-widest uppercase block mb-1">Ghi Nhận Đóng Góp</span>
+        <h2 class="text-2xl md:text-3xl font-black text-gray-800">Sổ Vàng Học Tập Gương Bác</h2>
+        <div class="w-24 h-1 bg-[#D62D20] mx-auto mt-3 rounded-full"></div>
+        <p class="text-gray-500 text-sm mt-3">
+          Những bài cảm nhận sâu sắc của Đảng viên và quần chúng nhân dân đã được Ban chi ủy xét duyệt.
+        </p>
+      </div>
+
+      <!-- Ledger Content Container -->
+      <div id="golden-book-container" class="max-w-5xl mx-auto">
+        <!-- Javascript loads items here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto bg-[#D62D20] text-white border-t-4 border-[#FFD700] py-10 px-4">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center border-b border-white/10 pb-8 mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-[#FFD700] rounded-full flex items-center justify-center star-glow">
+          <span class="text-[#D62D20] text-2xl font-bold">★</span>
+        </div>
+        <div>
+          <h4 class="font-extrabold uppercase text-lg">Không Gian Văn Hóa Hồ Chí Minh</h4>
+          <p class="text-xs text-red-100">Dự án mã nguồn mở phục vụ sinh hoạt Chi bộ Đảng cơ sở</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap md:justify-end gap-6 text-sm font-semibold">
+        <a href="#" class="hover:text-[#FFD700]">Trang chủ</a>
+        <a href="#heritage-timeline" class="hover:text-[#FFD700]">Hành trình di sản</a>
+        <a href="#digital-library" class="hover:text-[#FFD700]">Tủ sách số</a>
+        <a href="#contribution" class="hover:text-[#FFD700]">Gửi đóng góp</a>
+        <a href="admin.html" class="hover:text-[#FFD700]">Trang quản trị</a>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-red-200">
+      <p class="mb-2 md:mb-0">© 2026 Dự án Không Gian Văn Hóa Hồ Chí Minh. Phát hành dưới dạng mã nguồn mở phi thương mại.</p>
+      <p>Thiết kế tinh tế theo Quy trình Web Quản lý Phòng khám bài bản.</p>
+    </div>
+  </footer>
+
+  <!-- POPUP MODAL ĐỌC THỬ SÁCH -->
+  <div id="book-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden border border-orange-50 animate-scale-up">
+      <!-- Header -->
+      <div class="bg-[#D62D20] text-white p-6 relative border-b border-[#FFD700]/30 flex justify-between items-start">
+        <div>
+          <h3 id="modal-book-title" class="text-xl font-bold mb-1">Tên tác phẩm</h3>
+          <p id="modal-book-author" class="text-xs font-semibold text-[#FFD700]">Tác giả: Nguyễn Văn A</p>
+        </div>
+        <button id="close-book-modal" class="text-white hover:text-[#FFD700] text-2xl font-bold bg-white/10 w-8 h-8 rounded-full flex items-center justify-center focus:outline-none transition duration-150 cursor-pointer">
+          &times;
+        </button>
+      </div>
+      <!-- Body -->
+      <div class="p-6 md:p-8 overflow-y-auto flex-1 bg-[#FDFCFA]">
+        <h4 class="text-xs font-extrabold uppercase text-gray-400 tracking-wider mb-3">Tóm tắt & Trích đoạn tiêu biểu</h4>
+        <div id="modal-book-summary" class="text-gray-700 leading-relaxed text-sm whitespace-pre-line bg-white border border-gray-150 p-5 rounded-2xl shadow-inner italic">
+          Nội dung trích đoạn...
+        </div>
+      </div>
+      <!-- Footer -->
+      <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-end">
+        <button 
+          onclick="document.getElementById('close-book-modal').click()"
+          class="px-5 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl text-xs transition duration-150 cursor-pointer"
+        >
+          Đóng cửa sổ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST THÔNG BÁO GỬI THÀNH CÔNG -->
+  <div id="toast-success" class="fixed bottom-5 right-5 bg-emerald-600 text-white px-5 py-4 rounded-2xl shadow-2xl border border-emerald-500 max-w-sm z-50 flex items-start gap-3 hidden animate-slide-in">
+    <div class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+      ✓
+    </div>
+    <div class="flex-1">
+      <h5 class="font-bold text-sm">Gửi thành công!</h5>
+      <p class="text-xs text-emerald-100 mt-0.5">Tư liệu của bạn đã được gửi đến Ban chi ủy Chi bộ để kiểm duyệt.</p>
+    </div>
+    <button id="close-toast" class="text-emerald-200 hover:text-white font-bold text-sm leading-none focus:outline-none cursor-pointer">
+      &times;
+    </button>
+  </div>
+
+  <!-- App Main Logic script -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
