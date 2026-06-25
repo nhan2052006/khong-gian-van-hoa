@@ -9,7 +9,7 @@ import {
   isSimulation 
 } from './firebase-db.js';
 
-document.addEventListener("DOMContentLoaded", () => {
+function init() {
   initAdminAuth();
   initDashboardForms();
   
@@ -19,7 +19,13 @@ document.addEventListener("DOMContentLoaded", () => {
       loadArchivedContributions();
     });
   }
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
 
 // 1. Quản lý Trạng thái Đăng nhập & Hiển thị
 function initAdminAuth() {
@@ -108,9 +114,8 @@ function initAdminAuth() {
     if (loginError) {
       loginError.textContent = msg;
       loginError.classList.remove("hidden");
-    } else {
-      alert(msg);
     }
+    alert("Lỗi đăng nhập: " + msg);
   }
 }
 

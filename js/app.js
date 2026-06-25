@@ -72,14 +72,20 @@ const TIMELINE_DATA = [
   }
 ];
 
-document.addEventListener("DOMContentLoaded", () => {
+function init() {
   initExhibition();
   initTimeline();
   loadBooks();
   loadApprovedContributions();
   initContributionForm();
   initModals();
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
 
 // 1. Logic Dòng thời gian (Timeline)
 function initTimeline() {
