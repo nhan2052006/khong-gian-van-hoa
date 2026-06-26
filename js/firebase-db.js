@@ -143,6 +143,40 @@ export async function addDigitalBook(bookTitle, author, summary) {
   }
 }
 
+export async function updateDigitalBook(id, bookTitle, author, summary) {
+  if (isSimulationActive) {
+    const books = JSON.parse(localStorage.getItem('hcm_books')) || [];
+    const index = books.findIndex(b => b.id === id);
+    if (index !== -1) {
+      books[index].bookTitle = bookTitle;
+      books[index].author = author;
+      books[index].summary = summary;
+      localStorage.setItem('hcm_books', JSON.stringify(books));
+      return true;
+    }
+    return false;
+  } else {
+    const { doc: fbDoc, updateDoc: fbUpdateDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const docRef = fbDoc(db, "digital-books", id);
+    await fbUpdateDoc(docRef, { bookTitle, author, summary });
+    return true;
+  }
+}
+
+export async function deleteDigitalBook(id) {
+  if (isSimulationActive) {
+    const books = JSON.parse(localStorage.getItem('hcm_books')) || [];
+    const filtered = books.filter(b => b.id !== id);
+    localStorage.setItem('hcm_books', JSON.stringify(filtered));
+    return true;
+  } else {
+    const { doc: fbDoc, deleteDoc: fbDeleteDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const docRef = fbDoc(db, "digital-books", id);
+    await fbDeleteDoc(docRef);
+    return true;
+  }
+}
+
 // 2. Bài viết đóng góp (contributions)
 export async function getApprovedContributions() {
   if (isSimulationActive) {
@@ -236,6 +270,46 @@ export async function updateContribution(id, status, content = null) {
       updateData.content = content;
     }
     await fbUpdateDoc(docRef, updateData);
+    return true;
+  }
+}
+
+export async function updateContributionFull(id, title, authorName, content, status) {
+  if (isSimulationActive) {
+    const contribs = JSON.parse(localStorage.getItem('hcm_contributions')) || [];
+    const index = contribs.findIndex(c => c.id === id);
+    if (index !== -1) {
+      contribs[index].title = title;
+      contribs[index].authorName = authorName.trim() === "" ? "Ẩn danh" : authorName;
+      contribs[index].content = content;
+      contribs[index].status = status;
+      localStorage.setItem('hcm_contributions', JSON.stringify(contribs));
+      return true;
+    }
+    return false;
+  } else {
+    const { doc: fbDoc, updateDoc: fbUpdateDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const docRef = fbDoc(db, "contributions", id);
+    await fbUpdateDoc(docRef, { 
+      title, 
+      authorName: authorName.trim() === "" ? "Ẩn danh" : authorName, 
+      content, 
+      status 
+    });
+    return true;
+  }
+}
+
+export async function deleteContribution(id) {
+  if (isSimulationActive) {
+    const contribs = JSON.parse(localStorage.getItem('hcm_contributions')) || [];
+    const filtered = contribs.filter(c => c.id !== id);
+    localStorage.setItem('hcm_contributions', JSON.stringify(filtered));
+    return true;
+  } else {
+    const { doc: fbDoc, deleteDoc: fbDeleteDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const docRef = fbDoc(db, "contributions", id);
+    await fbDeleteDoc(docRef);
     return true;
   }
 }

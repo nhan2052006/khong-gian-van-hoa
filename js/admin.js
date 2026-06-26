@@ -4,21 +4,21 @@ import {
   onAuthStateChange, 
   getPendingContributions, 
   updateContribution,
+  updateContributionFull,
+  deleteContribution,
   getArchivedContributions,
+  getDigitalBooks,
   addDigitalBook,
+  updateDigitalBook,
+  deleteDigitalBook,
   isSimulation 
 } from './firebase-db.js';
 
+// Khởi tạo và liên kết sự kiện khi trang đã tải
 function init() {
   initAdminAuth();
   initDashboardForms();
-  
-  const refreshArchiveBtn = document.getElementById("btn-refresh-archive");
-  if (refreshArchiveBtn) {
-    refreshArchiveBtn.addEventListener("click", () => {
-      loadArchivedContributions();
-    });
-  }
+  initModals();
 }
 
 if (document.readyState === "loading") {
@@ -27,7 +27,9 @@ if (document.readyState === "loading") {
   init();
 }
 
-// 1. Quản lý Trạng thái Đăng nhập & Hiển thị
+// ==========================================
+// 1. QUẢN LÝ TRẠNG THÁI ĐĂNG NHẬP & XÁC THỰC
+// ==========================================
 function initAdminAuth() {
   const loginSection = document.getElementById("login-section");
   const dashboardSection = document.getElementById("dashboard-section");
@@ -37,31 +39,30 @@ function initAdminAuth() {
   const adminEmailDisplay = document.getElementById("admin-email-display");
   const simNotice = document.getElementById("simulation-notice");
 
-  // Hiển thị thông báo hướng dẫn đăng nhập nếu đang ở chế độ giả lập
+  // Hiển thị chỉ dẫn nếu ở chế độ Giả lập
   if (simNotice && isSimulation()) {
     simNotice.classList.remove("hidden");
   }
 
-  // Lắng nghe trạng thái đăng nhập
+  // Lắng nghe Auth State
   onAuthStateChange((user) => {
     if (user) {
-      // Đã đăng nhập
       loginSection.classList.add("hidden");
       dashboardSection.classList.remove("hidden");
       if (adminEmailDisplay) {
         adminEmailDisplay.textContent = `Tài khoản: ${user.email} ${isSimulation() ? '(Giả lập)' : ''}`;
       }
-      // Tải danh sách bài đóng góp chờ duyệt và kho lưu trữ
+      // Tải dữ liệu ban đầu
       loadPendingContributions();
       loadArchivedContributions();
+      loadBooks();
     } else {
-      // Chưa đăng nhập
       loginSection.classList.remove("hidden");
       dashboardSection.classList.add("hidden");
     }
   });
 
-  // Xử lý nộp Form đăng nhập
+  // Gửi Form Đăng nhập
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -144,7 +145,84 @@ function initAdminAuth() {
   }
 }
 
-// 2. Logic Duyệt Bài (Dành cho Admin)
+// ==========================================
+// 2. BIỂU MẪU & LẮNG NGHE SỰ KIỆN TẢI LẠI
+// ==========================================
+function initDashboardForms() {
+  const bookForm = document.getElementById("add-book-form");
+  const submitBookBtn = document.getElementById("btn-submit-book");
+  const bookSuccessAlert = document.getElementById("book-success-alert");
+  
+  const refreshBooksBtn = document.getElementById("btn-refresh-books");
+  const refreshArchiveBtn = document.getElementById("btn-refresh-archive");
+
+  // Nút tải lại Tủ sách
+  if (refreshBooksBtn) {
+    refreshBooksBtn.addEventListener("click", () => {
+      loadBooks();
+    });
+  }
+
+  // Nút tải lại Kho lưu trữ
+  if (refreshArchiveBtn) {
+    refreshArchiveBtn.addEventListener("click", () => {
+      loadArchivedContributions();
+    });
+  }
+
+  // Thêm sách mới
+  if (bookForm) {
+    bookForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const bookTitle = document.getElementById("book-title").value.trim();
+      const author = document.getElementById("book-author").value.trim();
+      const summary = document.getElementById("book-summary").value.trim();
+
+      if (!bookTitle || !author || !summary) {
+        alert("Vui lòng điền đầy đủ tất cả thông tin của sách.");
+        return;
+      }
+
+      try {
+        submitBookBtn.disabled = true;
+        submitBookBtn.innerHTML = `
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Đang thêm vào tủ sách...
+        `;
+
+        await addDigitalBook(bookTitle, author, summary);
+        bookForm.reset();
+
+        if (bookSuccessAlert) {
+          bookSuccessAlert.classList.remove("hidden");
+          setTimeout(() => {
+            bookSuccessAlert.classList.add("hidden");
+          }, 3000);
+        }
+
+        // Tải lại tủ sách quản lý
+        loadBooks();
+
+      } catch (error) {
+        console.error("Lỗi khi thêm sách:", error);
+        alert("Lỗi hệ thống, không thể thêm sách lúc này.");
+      } finally {
+        submitBookBtn.disabled = false;
+        submitBookBtn.textContent = "Thêm vào tủ sách";
+      }
+    });
+  }
+}
+
+// ==========================================
+// 3. QUẢN LÝ BÀI ĐÓNG GÓP (DUYỆT & LƯU TRỮ)
+// ==========================================
+
+// Tải danh sách bài viết chờ duyệt
 async function loadPendingContributions() {
   const pendingContainer = document.getElementById("pending-contributions-container");
   if (!pendingContainer) return;
@@ -172,62 +250,56 @@ async function loadPendingContributions() {
       <div class="bg-white border border-gray-150 rounded-xl p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between" id="contrib-card-${item.id}">
         <div>
           <div class="flex items-start justify-between gap-4 mb-2">
-            <h4 class="font-bold text-gray-800 text-base">${item.title}</h4>
+            <h4 class="font-bold text-gray-800 text-base" id="pending-title-text-${item.id}">${item.title}</h4>
             <span class="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-bold rounded">Chờ duyệt</span>
           </div>
           <label class="block text-[11px] font-bold text-gray-400 uppercase mb-1">Nội dung đóng góp (Có thể sửa tại đây):</label>
           <textarea 
             id="pending-textarea-${item.id}"
-            rows="5"
+            rows="4"
             class="w-full p-3 text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 resize-y mb-4"
           >${item.content}</textarea>
         </div>
         <div class="border-t border-gray-100 pt-3 mt-2">
           <div class="flex items-center justify-between text-xs text-gray-500 mb-4">
-            <span class="font-semibold text-gray-700">Người gửi: ${item.authorName}</span>
+            <span>Người gửi: <strong class="text-gray-700" id="pending-author-text-${item.id}">${item.authorName}</strong></span>
             <span>Gửi lúc: ${new Date(item.createdAt).toLocaleString('vi-VN')}</span>
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-wrap gap-2">
             <button 
-              class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-approve"
+              class="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-approve"
               data-id="${item.id}"
             >
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
               Duyệt đăng
             </button>
             <button 
-              class="py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-reject"
+              class="flex-1 py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-reject"
               data-id="${item.id}"
             >
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
               Từ chối
+            </button>
+            <button 
+              class="py-2 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-edit-contrib"
+              data-id="${item.id}"
+              data-title="${item.title}"
+              data-author="${item.authorName}"
+              data-status="${item.status}"
+            >
+              Sửa
+            </button>
+            <button 
+              class="py-2 px-3 bg-gray-100 hover:bg-red-100 hover:text-red-700 text-gray-500 font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-delete-contrib"
+              data-id="${item.id}"
+            >
+              Xóa
             </button>
           </div>
         </div>
       </div>
     `).join('');
 
-    // Gán sự kiện click nút Duyệt
-    pendingContainer.querySelectorAll(".btn-approve").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const id = btn.getAttribute("data-id");
-        const textarea = document.getElementById(`pending-textarea-${id}`);
-        const contentVal = textarea ? textarea.value.trim() : null;
-        await processContribution(id, 'approved', contentVal);
-      });
-    });
-
-    // Gán sự kiện click nút Từ chối
-    pendingContainer.querySelectorAll(".btn-reject").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const id = btn.getAttribute("data-id");
-        const textarea = document.getElementById(`pending-textarea-${id}`);
-        const contentVal = textarea ? textarea.value.trim() : null;
-        if (confirm("Bạn có chắc muốn từ chối bài viết đóng góp này?")) {
-          await processContribution(id, 'rejected', contentVal);
-        }
-      });
-    });
+    // Bắt sự kiện click
+    bindContributionActions(pendingContainer);
 
   } catch (error) {
     console.error("Lỗi khi tải danh sách chờ duyệt:", error);
@@ -235,104 +307,7 @@ async function loadPendingContributions() {
   }
 }
 
-async function processContribution(id, status, content = null) {
-  const card = document.getElementById(`contrib-card-${id}`);
-  const actionText = status === 'approved' ? 'duyệt đăng' : 'từ chối';
-  
-  try {
-    if (card) {
-      card.style.opacity = 0.5;
-      card.style.pointerEvents = 'none';
-    }
-
-    const success = await updateContribution(id, status, content);
-    
-    if (success) {
-      if (card) {
-        card.style.transform = "scale(0.95)";
-        setTimeout(() => {
-          card.remove();
-          // Kiểm tra xem còn bài nào không, nếu hết thì load lại để hiện thông báo trống
-          const container = document.getElementById("pending-contributions-container");
-          if (container && container.children.length === 0) {
-            loadPendingContributions();
-          }
-          // Tải lại kho lưu trữ sau khi duyệt/từ chối
-          loadArchivedContributions();
-        }, 300);
-      }
-    } else {
-      alert("Không thể cập nhật trạng thái bài viết.");
-      if (card) {
-        card.style.opacity = 1;
-        card.style.pointerEvents = 'auto';
-      }
-    }
-  } catch (error) {
-    console.error(`Lỗi khi ${actionText} bài viết:`, error);
-    alert(`Thao tác thất bại: ${error.message}`);
-    if (card) {
-      card.style.opacity = 1;
-      card.style.pointerEvents = 'auto';
-    }
-  }
-}
-
-// 3. Logic Form thêm sách
-function initDashboardForms() {
-  const bookForm = document.getElementById("add-book-form");
-  const submitBookBtn = document.getElementById("btn-submit-book");
-  const bookSuccessAlert = document.getElementById("book-success-alert");
-
-  if (!bookForm || !submitBookBtn) return;
-
-  bookForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const bookTitle = document.getElementById("book-title").value.trim();
-    const author = document.getElementById("book-author").value.trim();
-    const summary = document.getElementById("book-summary").value.trim();
-
-    if (!bookTitle || !author || !summary) {
-      alert("Vui lòng điền đầy đủ tất cả thông tin của sách.");
-      return;
-    }
-
-    try {
-      submitBookBtn.disabled = true;
-      submitBookBtn.innerHTML = `
-        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        Đang thêm vào tủ sách...
-      `;
-
-      await addDigitalBook(bookTitle, author, summary);
-
-      bookForm.reset();
-
-      // Hiển thị thông báo thành công
-      if (bookSuccessAlert) {
-        bookSuccessAlert.classList.remove("hidden");
-        setTimeout(() => {
-          bookSuccessAlert.classList.add("hidden");
-        }, 4000);
-      } else {
-        alert("Thêm sách vào Tủ sách điện tử thành công!");
-      }
-
-    } catch (error) {
-      console.error("Lỗi khi thêm sách:", error);
-      alert("Lỗi hệ thống, không thể thêm sách lúc này.");
-    } finally {
-      submitBookBtn.disabled = false;
-      submitBookBtn.textContent = "Thêm vào tủ sách";
-    }
-  });
-}
-
-// 4. Logic Kho Lưu Trữ Tư Liệu Chi Bộ
+// Tải danh sách bài viết lưu trữ (Kho lưu trữ)
 async function loadArchivedContributions() {
   const archiveContainer = document.getElementById("archive-contributions-container");
   if (!archiveContainer) return;
@@ -365,7 +340,7 @@ async function loadArchivedContributions() {
         <div class="bg-gray-50/50 border border-gray-200 rounded-xl p-5 flex flex-col justify-between" id="archive-card-${item.id}">
           <div>
             <div class="flex items-start justify-between gap-4 mb-3">
-              <h4 class="font-bold text-gray-800 text-sm">${item.title}</h4>
+              <h4 class="font-bold text-gray-800 text-sm" id="archive-title-text-${item.id}">${item.title}</h4>
               ${statusBadge}
             </div>
             <textarea 
@@ -376,21 +351,36 @@ async function loadArchivedContributions() {
           </div>
           <div class="border-t border-gray-200 pt-3 mt-2">
             <div class="flex items-center justify-between text-[11px] text-gray-500 mb-4">
-              <span>Người gửi: <strong class="text-gray-700">${item.authorName}</strong></span>
+              <span>Người gửi: <strong class="text-gray-700" id="archive-author-text-${item.id}">${item.authorName}</strong></span>
               <span>Ngày gửi: ${new Date(item.createdAt).toLocaleDateString('vi-VN')}</span>
             </div>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-wrap gap-2">
               <button 
-                class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-archive-update"
+                class="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-archive-update"
                 data-id="${item.id}"
               >
                 Cập nhật & Duyệt lại
               </button>
               <button 
-                class="py-2 px-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-archive-pending"
+                class="flex-1 py-2 px-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-archive-pending"
                 data-id="${item.id}"
               >
-                Chuyển thành Chờ duyệt
+                Chờ duyệt
+              </button>
+              <button 
+                class="py-2 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-edit-contrib"
+                data-id="${item.id}"
+                data-title="${item.title}"
+                data-author="${item.authorName}"
+                data-status="${item.status}"
+              >
+                Sửa
+              </button>
+              <button 
+                class="py-2 px-3 bg-gray-100 hover:bg-red-100 hover:text-red-700 text-gray-500 font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-delete-contrib"
+                data-id="${item.id}"
+              >
+                Xóa
               </button>
             </div>
           </div>
@@ -398,33 +388,8 @@ async function loadArchivedContributions() {
       `;
     }).join('');
 
-    // Gán sự kiện click cập nhật & duyệt lại
-    archiveContainer.querySelectorAll(".btn-archive-update").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const id = btn.getAttribute("data-id");
-        const textarea = document.getElementById(`archive-textarea-${id}`);
-        const contentVal = textarea ? textarea.value.trim() : "";
-        if (contentVal === "") {
-          alert("Nội dung bài viết không được để trống.");
-          return;
-        }
-        await processArchive(id, 'approved', contentVal);
-      });
-    });
-
-    // Gán sự kiện click chuyển thành chờ duyệt
-    archiveContainer.querySelectorAll(".btn-archive-pending").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const id = btn.getAttribute("data-id");
-        const textarea = document.getElementById(`archive-textarea-${id}`);
-        const contentVal = textarea ? textarea.value.trim() : "";
-        if (contentVal === "") {
-          alert("Nội dung bài viết không được để trống.");
-          return;
-        }
-        await processArchive(id, 'pending', contentVal);
-      });
-    });
+    // Bắt sự kiện click
+    bindContributionActions(archiveContainer);
 
   } catch (error) {
     console.error("Lỗi khi tải kho lưu trữ:", error);
@@ -432,35 +397,317 @@ async function loadArchivedContributions() {
   }
 }
 
-async function processArchive(id, status, content) {
-  const card = document.getElementById(`archive-card-${id}`);
-  
-  try {
-    if (card) {
-      card.style.opacity = 0.5;
-      card.style.pointerEvents = 'none';
-    }
+// Ràng buộc các sự kiện hành động cho bài đóng góp
+function bindContributionActions(container) {
+  // Nút duyệt đăng
+  container.querySelectorAll(".btn-approve, .btn-archive-update").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-id");
+      const textarea = document.getElementById(`pending-textarea-${id}`) || document.getElementById(`archive-textarea-${id}`);
+      const contentVal = textarea ? textarea.value.trim() : null;
+      await processContribution(id, 'approved', contentVal);
+    });
+  });
 
-    const success = await updateContribution(id, status, content);
-    
-    if (success) {
-      // Tải lại cả danh sách chờ duyệt và kho lưu trữ
-      await loadPendingContributions();
-      await loadArchivedContributions();
-      alert(status === 'approved' ? "Cập nhật nội dung và duyệt lại bài thành công!" : "Đã cập nhật nội dung và chuyển bài về hàng chờ duyệt.");
-    } else {
-      alert("Không thể cập nhật bài viết lưu trữ.");
-      if (card) {
-        card.style.opacity = 1;
-        card.style.pointerEvents = 'auto';
+  // Nút từ chối
+  container.querySelectorAll(".btn-reject").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-id");
+      const textarea = document.getElementById(`pending-textarea-${id}`);
+      const contentVal = textarea ? textarea.value.trim() : null;
+      if (confirm("Bạn có chắc muốn từ chối bài viết đóng góp này?")) {
+        await processContribution(id, 'rejected', contentVal);
       }
+    });
+  });
+
+  // Nút trả về chờ duyệt
+  container.querySelectorAll(".btn-archive-pending").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-id");
+      const textarea = document.getElementById(`archive-textarea-${id}`);
+      const contentVal = textarea ? textarea.value.trim() : null;
+      await processContribution(id, 'pending', contentVal);
+    });
+  });
+
+  // Nút Xóa bài đóng góp
+  container.querySelectorAll(".btn-delete-contrib").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-id");
+      if (confirm("⚠️ CẢNH BÁO: Bạn có chắc chắn muốn XÓA VĨNH VIỄN bài đóng góp này khỏi cơ sở dữ liệu? Thao tác này không thể hoàn tác.")) {
+        await handleDeleteContribution(id);
+      }
+    });
+  });
+
+  // Nút Sửa mở Modal
+  container.querySelectorAll(".btn-edit-contrib").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      const title = btn.getAttribute("data-title");
+      const author = btn.getAttribute("data-author");
+      const status = btn.getAttribute("data-status");
+      
+      const textarea = document.getElementById(`pending-textarea-${id}`) || document.getElementById(`archive-textarea-${id}`);
+      const content = textarea ? textarea.value : "";
+      
+      openEditContribModal({ id, title, authorName: author, content, status });
+    });
+  });
+}
+
+// Xử lý Phê duyệt / Từ chối / Đổi trạng thái bài viết
+async function processContribution(id, status, content = null) {
+  try {
+    const success = await updateContribution(id, status, content);
+    if (success) {
+      loadPendingContributions();
+      loadArchivedContributions();
+    } else {
+      alert("Không thể cập nhật trạng thái bài viết.");
     }
   } catch (error) {
-    console.error("Lỗi khi xử lý bài viết lưu trữ:", error);
+    console.error("Lỗi khi xử lý bài đóng góp:", error);
     alert(`Thao tác thất bại: ${error.message}`);
-    if (card) {
-      card.style.opacity = 1;
-      card.style.pointerEvents = 'auto';
-    }
   }
+}
+
+// Xóa bài đóng góp vĩnh viễn
+async function handleDeleteContribution(id) {
+  try {
+    const success = await deleteContribution(id);
+    if (success) {
+      alert("Đã xóa vĩnh viễn bài đóng góp khỏi hệ thống.");
+      loadPendingContributions();
+      loadArchivedContributions();
+    } else {
+      alert("Xóa bài đóng góp thất bại.");
+    }
+  } catch (error) {
+    console.error("Lỗi khi xóa bài đóng góp:", error);
+    alert(`Lỗi hệ thống: ${error.message}`);
+  }
+}
+
+// ==========================================
+// 4. QUẢN LÝ TỦ SÁCH SỐ (HIỂN THỊ, XÓA)
+// ==========================================
+
+// Tải danh sách sách để quản lý
+async function loadBooks() {
+  const booksContainer = document.getElementById("managed-books-container");
+  if (!booksContainer) return;
+
+  try {
+    booksContainer.innerHTML = `
+      <div class="flex justify-center py-6">
+        <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#D62D20]"></div>
+      </div>
+    `;
+
+    const booksList = await getDigitalBooks();
+
+    if (booksList.length === 0) {
+      booksContainer.innerHTML = `
+        <p class="text-xs text-center text-gray-500 py-6">Tủ sách hiện chưa có tác phẩm nào.</p>
+      `;
+      return;
+    }
+
+    booksContainer.innerHTML = booksList.map(book => `
+      <div class="bg-gray-50 p-4 rounded-xl border border-gray-150 flex flex-col justify-between gap-3 shadow-inner" id="book-card-${book.id}">
+        <div>
+          <h4 class="font-bold text-gray-800 text-sm line-clamp-1" id="book-title-text-${book.id}">${book.bookTitle}</h4>
+          <p class="text-xs font-semibold text-[#D62D20] mt-0.5" id="book-author-text-${book.id}">Tác giả: ${book.author}</p>
+          <p class="text-xs text-gray-500 mt-2 line-clamp-2" id="book-summary-text-${book.id}">${book.summary}</p>
+        </div>
+        <div class="flex gap-2 border-t border-gray-200/60 pt-2.5">
+          <button 
+            class="flex-1 py-1.5 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg text-xs transition duration-150 cursor-pointer btn-edit-book"
+            data-id="${book.id}"
+            data-title="${book.bookTitle}"
+            data-author="${book.author}"
+            data-summary="${book.summary}"
+          >
+            Sửa
+          </button>
+          <button 
+            class="flex-1 py-1.5 px-3 bg-gray-100 hover:bg-red-100 hover:text-red-700 text-gray-500 font-bold rounded-lg text-xs transition duration-150 cursor-pointer btn-delete-book"
+            data-id="${book.id}"
+          >
+            Xóa
+          </button>
+        </div>
+      </div>
+    `).join('');
+
+    // Đăng ký sự kiện click
+    booksContainer.querySelectorAll(".btn-delete-book").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-id");
+        if (confirm("Bạn có chắc muốn XÓA VĨNH VIỄN cuốn sách này khỏi Tủ sách điện tử? Độc giả ngoài trang chủ sẽ không thể đọc trích đoạn của nó nữa.")) {
+          await handleDeleteBook(id);
+        }
+      });
+    });
+
+    booksContainer.querySelectorAll(".btn-edit-book").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-id");
+        const title = btn.getAttribute("data-title");
+        const author = btn.getAttribute("data-author");
+        const summary = btn.getAttribute("data-summary");
+        
+        openEditBookModal({ id, bookTitle: title, author, summary });
+      });
+    });
+
+  } catch (error) {
+    console.error("Lỗi khi tải tủ sách quản lý:", error);
+    booksContainer.innerHTML = `<p class="text-xs text-center text-red-600 py-6">Lỗi tải dữ liệu tủ sách.</p>`;
+  }
+}
+
+// Xóa sách vĩnh viễn
+async function handleDeleteBook(id) {
+  try {
+    const success = await deleteDigitalBook(id);
+    if (success) {
+      alert("Đã xóa cuốn sách thành công khỏi tủ sách Chi bộ.");
+      loadBooks();
+    } else {
+      alert("Không thể xóa sách.");
+    }
+  } catch (error) {
+    console.error("Lỗi khi xóa sách:", error);
+    alert(`Lỗi hệ thống: ${error.message}`);
+  }
+}
+
+// ==========================================
+// 5. CƠ CHẾ ĐIỀU PHỐI POPUP MODAL (EDIT)
+// ==========================================
+function initModals() {
+  const editContribModal = document.getElementById("edit-contrib-modal");
+  const editBookModal = document.getElementById("edit-book-modal");
+
+  const closeContribBtns = [
+    document.getElementById("btn-close-edit-contrib"),
+    document.getElementById("btn-cancel-edit-contrib")
+  ];
+  
+  const closeBookBtns = [
+    document.getElementById("btn-close-edit-book"),
+    document.getElementById("btn-cancel-edit-book")
+  ];
+
+  // Sự kiện đóng Modal đóng góp
+  closeContribBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener("click", () => {
+        editContribModal.classList.add("hidden");
+        editContribModal.classList.remove("flex");
+      });
+    }
+  });
+
+  // Sự kiện đóng Modal sách
+  closeBookBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener("click", () => {
+        editBookModal.classList.add("hidden");
+        editBookModal.classList.remove("flex");
+      });
+    }
+  });
+
+  // Lưu Form chỉnh sửa đóng đóng góp
+  const editContribForm = document.getElementById("edit-contrib-form");
+  if (editContribForm) {
+    editContribForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("edit-contrib-id").value;
+      const title = document.getElementById("edit-contrib-title").value.trim();
+      const author = document.getElementById("edit-contrib-author").value.trim();
+      const content = document.getElementById("edit-contrib-content").value.trim();
+      const status = document.getElementById("edit-contrib-status").value;
+
+      try {
+        const success = await updateContributionFull(id, title, author, content, status);
+        if (success) {
+          alert("Cập nhật thông tin bài đóng góp thành công!");
+          editContribModal.classList.add("hidden");
+          editContribModal.classList.remove("flex");
+          
+          // Tải lại các danh sách liên quan
+          loadPendingContributions();
+          loadArchivedContributions();
+        } else {
+          alert("Cập nhật thất bại.");
+        }
+      } catch (error) {
+        console.error("Lỗi khi lưu bài đóng góp:", error);
+        alert(`Lỗi hệ thống: ${error.message}`);
+      }
+    });
+  }
+
+  // Lưu Form chỉnh sửa sách
+  const editBookForm = document.getElementById("edit-book-form");
+  if (editBookForm) {
+    editBookForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("edit-book-id").value;
+      const title = document.getElementById("edit-book-title").value.trim();
+      const author = document.getElementById("edit-book-author").value.trim();
+      const summary = document.getElementById("edit-book-summary").value.trim();
+
+      try {
+        const success = await updateDigitalBook(id, title, author, summary);
+        if (success) {
+          alert("Cập nhật thông tin sách thành công!");
+          editBookModal.classList.add("hidden");
+          editBookModal.classList.remove("flex");
+          
+          // Tải lại tủ sách
+          loadBooks();
+        } else {
+          alert("Cập nhật thông tin sách thất bại.");
+        }
+      } catch (error) {
+        console.error("Lỗi khi lưu thông tin sách:", error);
+        alert(`Lỗi hệ thống: ${error.message}`);
+      }
+    });
+  }
+}
+
+// Mở Modal chỉnh sửa bài đóng góp
+function openEditContribModal(item) {
+  const modal = document.getElementById("edit-contrib-modal");
+  if (!modal) return;
+
+  document.getElementById("edit-contrib-id").value = item.id;
+  document.getElementById("edit-contrib-title").value = item.title;
+  document.getElementById("edit-contrib-author").value = item.authorName === "Ẩn danh" ? "" : item.authorName;
+  document.getElementById("edit-contrib-content").value = item.content;
+  document.getElementById("edit-contrib-status").value = item.status;
+
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
+
+// Mở Modal chỉnh sửa sách
+function openEditBookModal(item) {
+  const modal = document.getElementById("edit-book-modal");
+  if (!modal) return;
+
+  document.getElementById("edit-book-id").value = item.id;
+  document.getElementById("edit-book-title").value = item.bookTitle;
+  document.getElementById("edit-book-author").value = item.author;
+  document.getElementById("edit-book-summary").value = item.summary;
+
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
 }
