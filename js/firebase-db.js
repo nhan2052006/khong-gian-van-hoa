@@ -56,6 +56,29 @@ const DEFAULT_CONTRIBUTIONS = [
   }
 ];
 
+const DEFAULT_REFERENCES = [
+  {
+    id: "ref-doc-1",
+    title: "Tư tưởng Hồ Chí Minh về xây dựng Chi bộ Đảng trong sạch, vững mạnh",
+    author: "Ban Tuyên giáo Trung ương",
+    summary: "Bài viết tổng hợp và phân tích sâu sắc các chỉ dẫn luận điểm của Chủ tịch Hồ Chí Minh về công tác xây dựng Đảng ở cấp cơ sở, nhấn mạnh vai trò tiên phong của chi bộ.",
+    content: "Chi bộ là nền móng của Đảng, chi bộ tốt thì mọi việc đều tốt. Để xây dựng Chi bộ trong sạch vững mạnh, Chủ tịch Hồ Chí Minh yêu cầu mỗi cán bộ đảng viên phải tự phê bình và phê bình thường xuyên như rửa mặt hàng ngày. Công tác tư tưởng phải đi trước một bước, rèn luyện tư cách đạo đức cách mạng, quét sạch chủ nghĩa cá nhân. Bài viết này trình bày chi tiết 5 nguyên tắc tổ chức sinh hoạt chi bộ hiệu quả...",
+    imageUrl: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&q=80&w=600",
+    videoUrl: "https://www.youtube.com/embed/Pj1aK6nK478",
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: "ref-doc-2",
+    title: "Sổ tay sinh hoạt Chi bộ điện tử: Đổi mới và nâng cao chất lượng",
+    author: "Tổ biên soạn Chi bộ",
+    summary: "Hướng dẫn chi tiết về cách số hóa tài liệu sinh hoạt, ứng dụng công nghệ thông tin nâng cao hiệu quả tuyên truyền đạo đức Hồ Chí Minh tại Chi bộ.",
+    content: "Đổi mới nội dung sinh hoạt chi bộ thông qua chuyển đổi số là nhiệm vụ trọng tâm hiện nay. Việc lưu trữ các tài liệu số hóa như tủ sách, hành trình di sản giúp các Đảng viên tiếp cận thông tin mọi lúc mọi nơi. Tài liệu này cung cấp bộ khung tổ chức sinh hoạt số hóa chuẩn gồm 3 giai đoạn: chuẩn bị nội dung điện tử, thảo luận trực tiếp và biểu quyết trực tuyến...",
+    imageUrl: "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&q=80&w=600",
+    videoUrl: "",
+    createdAt: new Date(Date.now() - 86400000).toISOString()
+  }
+];
+
 // Khởi tạo Simulated Database trong localStorage
 function initSimulation() {
   if (!localStorage.getItem('hcm_books')) {
@@ -63,6 +86,9 @@ function initSimulation() {
   }
   if (!localStorage.getItem('hcm_contributions')) {
     localStorage.setItem('hcm_contributions', JSON.stringify(DEFAULT_CONTRIBUTIONS));
+  }
+  if (!localStorage.getItem('hcm_references')) {
+    localStorage.setItem('hcm_references', JSON.stringify(DEFAULT_REFERENCES));
   }
   if (!localStorage.getItem('hcm_admin_user')) {
     // Tài khoản Admin giả lập mặc định: admin@chibo.vn / chibo12345
@@ -382,4 +408,95 @@ export async function onAuthStateChange(callback) {
 
 export function isSimulation() {
   return isSimulationActive;
+}
+
+// 4. Tài liệu tham khảo (reference_documents)
+export async function getReferenceDocuments() {
+  if (isSimulationActive) {
+    const refs = JSON.parse(localStorage.getItem('hcm_references')) || [];
+    return refs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  } else {
+    const { collection: fbCollection, getDocs: fbGetDocs, query: fbQuery, orderBy: fbOrderBy } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const refCol = fbCollection(db, "reference_documents");
+    const q = fbQuery(refCol, fbOrderBy("createdAt", "desc"));
+    const querySnapshot = await fbGetDocs(q);
+    const refs = [];
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      refs.push({
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt
+      });
+    });
+    return refs;
+  }
+}
+
+export async function addReferenceDocument(title, author, summary, content, imageUrl, videoUrl) {
+  const newRef = {
+    title,
+    author: author.trim() === "" ? "Ban biên tập" : author,
+    summary,
+    content,
+    imageUrl: imageUrl.trim(),
+    videoUrl: videoUrl.trim(),
+    createdAt: isSimulationActive ? new Date().toISOString() : new Date()
+  };
+
+  if (isSimulationActive) {
+    const refs = JSON.parse(localStorage.getItem('hcm_references')) || [];
+    newRef.id = "ref-" + Math.random().toString(36).substr(2, 9);
+    refs.push(newRef);
+    localStorage.setItem('hcm_references', JSON.stringify(refs));
+    return newRef;
+  } else {
+    const { collection: fbCollection, addDoc: fbAddDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const docRef = await fbAddDoc(fbCollection(db, "reference_documents"), newRef);
+    return { id: docRef.id, ...newRef };
+  }
+}
+
+export async function updateReferenceDocument(id, title, author, summary, content, imageUrl, videoUrl) {
+  if (isSimulationActive) {
+    const refs = JSON.parse(localStorage.getItem('hcm_references')) || [];
+    const index = refs.findIndex(r => r.id === id);
+    if (index !== -1) {
+      refs[index].title = title;
+      refs[index].author = author.trim() === "" ? "Ban biên tập" : author;
+      refs[index].summary = summary;
+      refs[index].content = content;
+      refs[index].imageUrl = imageUrl.trim();
+      refs[index].videoUrl = videoUrl.trim();
+      localStorage.setItem('hcm_references', JSON.stringify(refs));
+      return true;
+    }
+    return false;
+  } else {
+    const { doc: fbDoc, updateDoc: fbUpdateDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const docRef = fbDoc(db, "reference_documents", id);
+    await fbUpdateDoc(docRef, {
+      title,
+      author: author.trim() === "" ? "Ban biên tập" : author,
+      summary,
+      content,
+      imageUrl: imageUrl.trim(),
+      videoUrl: videoUrl.trim()
+    });
+    return true;
+  }
+}
+
+export async function deleteReferenceDocument(id) {
+  if (isSimulationActive) {
+    const refs = JSON.parse(localStorage.getItem('hcm_references')) || [];
+    const filtered = refs.filter(r => r.id !== id);
+    localStorage.setItem('hcm_references', JSON.stringify(filtered));
+    return true;
+  } else {
+    const { doc: fbDoc, deleteDoc: fbDeleteDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const docRef = fbDoc(db, "reference_documents", id);
+    await fbDeleteDoc(docRef);
+    return true;
+  }
 }

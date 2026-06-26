@@ -11,6 +11,10 @@ import {
   addDigitalBook,
   updateDigitalBook,
   deleteDigitalBook,
+  getReferenceDocuments,
+  addReferenceDocument,
+  updateReferenceDocument,
+  deleteReferenceDocument,
   isSimulation 
 } from './firebase-db.js';
 
@@ -25,6 +29,20 @@ if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", init);
 } else {
   init();
+}
+
+// Helper tự động chuẩn hóa link YouTube thông thường sang dạng nhúng /embed/
+function sanitizeYouTubeEmbedUrl(url) {
+  if (!url || url.trim() === "") return "";
+  let cleanUrl = url.trim();
+  if (cleanUrl.includes("youtube.com/watch?v=")) {
+    const videoId = cleanUrl.split("watch?v=")[1].split("&")[0];
+    return `https://www.youtube.com/embed/${videoId}?rel=0`;
+  } else if (cleanUrl.includes("youtu.be/")) {
+    const videoId = cleanUrl.split("youtu.be/")[1].split("?")[0];
+    return `https://www.youtube.com/embed/${videoId}?rel=0`;
+  }
+  return cleanUrl;
 }
 
 // ==========================================
@@ -52,10 +70,11 @@ function initAdminAuth() {
       if (adminEmailDisplay) {
         adminEmailDisplay.textContent = `Tài khoản: ${user.email} ${isSimulation() ? '(Giả lập)' : ''}`;
       }
-      // Tải dữ liệu ban đầu
+      // Tải toàn bộ dữ liệu quản trị
       loadPendingContributions();
       loadArchivedContributions();
       loadBooks();
+      loadReferenceDocsAdmin();
     } else {
       loginSection.classList.remove("hidden");
       dashboardSection.classList.add("hidden");
@@ -153,8 +172,13 @@ function initDashboardForms() {
   const submitBookBtn = document.getElementById("btn-submit-book");
   const bookSuccessAlert = document.getElementById("book-success-alert");
   
+  const refForm = document.getElementById("add-ref-form");
+  const submitRefBtn = document.getElementById("btn-submit-ref");
+  const refSuccessAlert = document.getElementById("ref-success-alert");
+
   const refreshBooksBtn = document.getElementById("btn-refresh-books");
   const refreshArchiveBtn = document.getElementById("btn-refresh-archive");
+  const refreshRefsBtn = document.getElementById("btn-refresh-refs");
 
   // Nút tải lại Tủ sách
   if (refreshBooksBtn) {
@@ -167,6 +191,13 @@ function initDashboardForms() {
   if (refreshArchiveBtn) {
     refreshArchiveBtn.addEventListener("click", () => {
       loadArchivedContributions();
+    });
+  }
+
+  // Nút tải lại Tài liệu tham khảo
+  if (refreshRefsBtn) {
+    refreshRefsBtn.addEventListener("click", () => {
+      loadReferenceDocsAdmin();
     });
   }
 
@@ -213,6 +244,59 @@ function initDashboardForms() {
       } finally {
         submitBookBtn.disabled = false;
         submitBookBtn.textContent = "Thêm vào tủ sách";
+      }
+    });
+  }
+
+  // Thêm tài liệu tham khảo mới
+  if (refForm) {
+    refForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("ref-title").value.trim();
+      const author = document.getElementById("ref-author").value.trim();
+      const imageUrl = document.getElementById("ref-image-url").value.trim();
+      const rawVideoUrl = document.getElementById("ref-video-url").value.trim();
+      const summary = document.getElementById("ref-summary").value.trim();
+      const content = document.getElementById("ref-content").value.trim();
+
+      if (!title || !author || !summary || !content) {
+        alert("Vui lòng điền đầy đủ các thông tin bắt buộc (*).");
+        return;
+      }
+
+      // Chuẩn hóa link video nhúng YouTube
+      const videoUrl = sanitizeYouTubeEmbedUrl(rawVideoUrl);
+
+      try {
+        submitRefBtn.disabled = true;
+        submitRefBtn.innerHTML = `
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Đang tạo tài liệu...
+        `;
+
+        await addReferenceDocument(title, author, summary, content, imageUrl, videoUrl);
+        refForm.reset();
+
+        if (refSuccessAlert) {
+          refSuccessAlert.classList.remove("hidden");
+          setTimeout(() => {
+            refSuccessAlert.classList.add("hidden");
+          }, 3000);
+        }
+
+        // Tải lại danh sách quản lý
+        loadReferenceDocsAdmin();
+
+      } catch (error) {
+        console.error("Lỗi khi thêm tài liệu tham khảo:", error);
+        alert("Lỗi hệ thống, không thể tạo tài liệu lúc này.");
+      } finally {
+        submitRefBtn.disabled = false;
+        submitRefBtn.textContent = "Tạo tài liệu mới";
       }
     });
   }
@@ -501,7 +585,7 @@ async function loadBooks() {
 
   try {
     booksContainer.innerHTML = `
-      <div class="flex justify-center py-6">
+      <div class="col-span-full flex justify-center py-6">
         <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#D62D20]"></div>
       </div>
     `;
@@ -510,7 +594,7 @@ async function loadBooks() {
 
     if (booksList.length === 0) {
       booksContainer.innerHTML = `
-        <p class="text-xs text-center text-gray-500 py-6">Tủ sách hiện chưa có tác phẩm nào.</p>
+        <p class="col-span-full text-xs text-center text-gray-500 py-6">Tủ sách hiện chưa có tác phẩm nào.</p>
       `;
       return;
     }
@@ -565,7 +649,7 @@ async function loadBooks() {
 
   } catch (error) {
     console.error("Lỗi khi tải tủ sách quản lý:", error);
-    booksContainer.innerHTML = `<p class="text-xs text-center text-red-600 py-6">Lỗi tải dữ liệu tủ sách.</p>`;
+    booksContainer.innerHTML = `<p class="col-span-full text-xs text-center text-red-600 py-6">Lỗi tải dữ liệu tủ sách.</p>`;
   }
 }
 
@@ -586,11 +670,120 @@ async function handleDeleteBook(id) {
 }
 
 // ==========================================
-// 5. CƠ CHẾ ĐIỀU PHỐI POPUP MODAL (EDIT)
+// 5. QUẢN LÝ TÀI LIỆU THAM KHẢO (CRUD MỚI)
+// ==========================================
+
+// Tải danh sách tài liệu tham khảo trong Admin
+async function loadReferenceDocsAdmin() {
+  const refsContainer = document.getElementById("managed-references-container");
+  if (!refsContainer) return;
+
+  try {
+    refsContainer.innerHTML = `
+      <div class="col-span-full flex justify-center py-6">
+        <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#D62D20]"></div>
+      </div>
+    `;
+
+    const refsList = await getReferenceDocuments();
+
+    if (refsList.length === 0) {
+      refsContainer.innerHTML = `
+        <p class="col-span-full text-xs text-center text-gray-500 py-6">Hiện tại chưa có tài liệu tham khảo nào được tạo.</p>
+      `;
+      return;
+    }
+
+    refsContainer.innerHTML = refsList.map(ref => {
+      const displayImg = ref.imageUrl && ref.imageUrl.trim() !== "" ? ref.imageUrl : "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&q=80&w=200";
+      return `
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-150 flex flex-col justify-between gap-3 shadow-inner" id="ref-card-${ref.id}">
+          <div class="flex gap-3">
+            <img src="${displayImg}" alt="Avatar" class="w-12 h-12 rounded object-cover border border-gray-200">
+            <div class="flex-1 min-w-0">
+              <h4 class="font-bold text-gray-800 text-xs truncate" title="${ref.title}">${ref.title}</h4>
+              <p class="text-[10px] font-semibold text-gray-500 mt-0.5">Tác giả: ${ref.author}</p>
+              <p class="text-[10px] text-gray-400 mt-1 truncate">${ref.summary}</p>
+            </div>
+          </div>
+          <div class="flex gap-2 border-t border-gray-200/60 pt-2.5">
+            <button 
+              class="flex-1 py-1.5 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg text-xs transition duration-150 cursor-pointer btn-edit-ref"
+              data-id="${ref.id}"
+              data-title="${ref.title}"
+              data-author="${ref.author}"
+              data-image-url="${ref.imageUrl}"
+              data-video-url="${ref.videoUrl}"
+              data-summary="${ref.summary}"
+              data-content="${ref.content}"
+            >
+              Sửa
+            </button>
+            <button 
+              class="flex-1 py-1.5 px-3 bg-gray-100 hover:bg-red-100 hover:text-red-700 text-gray-500 font-bold rounded-lg text-xs transition duration-150 cursor-pointer btn-delete-ref"
+              data-id="${ref.id}"
+            >
+              Xóa
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Đăng ký sự kiện Xóa
+    refsContainer.querySelectorAll(".btn-delete-ref").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-id");
+        if (confirm("Bạn có chắc chắn muốn XÓA VĨNH VIỄN tài liệu tham khảo này? Thao tác này sẽ cập nhật ngay lập tức ra ngoài giao diện đọc tài liệu của Đảng viên.")) {
+          await handleDeleteRefDoc(id);
+        }
+      });
+    });
+
+    // Đăng ký sự kiện Sửa mở Modal
+    refsContainer.querySelectorAll(".btn-edit-ref").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-id");
+        const title = btn.getAttribute("data-title");
+        const author = btn.getAttribute("data-author");
+        const imageUrl = btn.getAttribute("data-image-url");
+        const videoUrl = btn.getAttribute("data-video-url");
+        const summary = btn.getAttribute("data-summary");
+        const content = btn.getAttribute("data-content");
+        
+        openEditRefModal({ id, title, author, imageUrl, videoUrl, summary, content });
+      });
+    });
+
+  } catch (error) {
+    console.error("Lỗi khi tải tài liệu tham khảo quản trị:", error);
+    refsContainer.innerHTML = `<p class="col-span-full text-xs text-center text-red-600 py-6">Lỗi tải dữ liệu tài liệu.</p>`;
+  }
+}
+
+// Xóa tài liệu tham khảo
+async function handleDeleteRefDoc(id) {
+  try {
+    const success = await deleteReferenceDocument(id);
+    if (success) {
+      alert("Đã xóa tài liệu tham khảo thành công khỏi hệ thống.");
+      loadReferenceDocsAdmin();
+    } else {
+      alert("Không thể xóa tài liệu tham khảo.");
+    }
+  } catch (error) {
+    console.error("Lỗi khi xóa tài liệu tham khảo:", error);
+    alert(`Lỗi hệ thống: ${error.message}`);
+  }
+}
+
+// ==========================================
+// 6. CƠ CHẾ ĐIỀU PHỐI POPUP MODAL (EDIT)
 // ==========================================
 function initModals() {
   const editContribModal = document.getElementById("edit-contrib-modal");
   const editBookModal = document.getElementById("edit-book-modal");
+  const editRefModal = document.getElementById("edit-ref-modal");
 
   const closeContribBtns = [
     document.getElementById("btn-close-edit-contrib"),
@@ -600,6 +793,11 @@ function initModals() {
   const closeBookBtns = [
     document.getElementById("btn-close-edit-book"),
     document.getElementById("btn-cancel-edit-book")
+  ];
+
+  const closeRefBtns = [
+    document.getElementById("btn-close-edit-ref"),
+    document.getElementById("btn-cancel-edit-ref")
   ];
 
   // Sự kiện đóng Modal đóng góp
@@ -622,6 +820,16 @@ function initModals() {
     }
   });
 
+  // Sự kiện đóng Modal tài liệu tham khảo
+  closeRefBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener("click", () => {
+        editRefModal.classList.add("hidden");
+        editRefModal.classList.remove("flex");
+      });
+    }
+  });
+
   // Lưu Form chỉnh sửa đóng đóng góp
   const editContribForm = document.getElementById("edit-contrib-form");
   if (editContribForm) {
@@ -640,7 +848,6 @@ function initModals() {
           editContribModal.classList.add("hidden");
           editContribModal.classList.remove("flex");
           
-          // Tải lại các danh sách liên quan
           loadPendingContributions();
           loadArchivedContributions();
         } else {
@@ -670,13 +877,46 @@ function initModals() {
           editBookModal.classList.add("hidden");
           editBookModal.classList.remove("flex");
           
-          // Tải lại tủ sách
           loadBooks();
         } else {
           alert("Cập nhật thông tin sách thất bại.");
         }
       } catch (error) {
         console.error("Lỗi khi lưu thông tin sách:", error);
+        alert(`Lỗi hệ thống: ${error.message}`);
+      }
+    });
+  }
+
+  // Lưu Form chỉnh sửa tài liệu tham khảo
+  const editRefForm = document.getElementById("edit-ref-form");
+  if (editRefForm) {
+    editRefForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("edit-ref-id").value;
+      const title = document.getElementById("edit-ref-title").value.trim();
+      const author = document.getElementById("edit-ref-author").value.trim();
+      const imageUrl = document.getElementById("edit-ref-image-url").value.trim();
+      const rawVideoUrl = document.getElementById("edit-ref-video-url").value.trim();
+      const summary = document.getElementById("edit-ref-summary").value.trim();
+      const content = document.getElementById("edit-ref-content").value.trim();
+
+      // Chuẩn hóa link video
+      const videoUrl = sanitizeYouTubeEmbedUrl(rawVideoUrl);
+
+      try {
+        const success = await updateReferenceDocument(id, title, author, summary, content, imageUrl, videoUrl);
+        if (success) {
+          alert("Cập nhật tài liệu tham khảo thành công!");
+          editRefModal.classList.add("hidden");
+          editRefModal.classList.remove("flex");
+          
+          loadReferenceDocsAdmin();
+        } else {
+          alert("Cập nhật thất bại.");
+        }
+      } catch (error) {
+        console.error("Lỗi khi lưu tài liệu tham khảo:", error);
         alert(`Lỗi hệ thống: ${error.message}`);
       }
     });
@@ -707,6 +947,23 @@ function openEditBookModal(item) {
   document.getElementById("edit-book-title").value = item.bookTitle;
   document.getElementById("edit-book-author").value = item.author;
   document.getElementById("edit-book-summary").value = item.summary;
+
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
+
+// Mở Modal chỉnh sửa tài liệu tham khảo
+function openEditRefModal(item) {
+  const modal = document.getElementById("edit-ref-modal");
+  if (!modal) return;
+
+  document.getElementById("edit-ref-id").value = item.id;
+  document.getElementById("edit-ref-title").value = item.title;
+  document.getElementById("edit-ref-author").value = item.author;
+  document.getElementById("edit-ref-image-url").value = item.imageUrl;
+  document.getElementById("edit-ref-video-url").value = item.videoUrl;
+  document.getElementById("edit-ref-summary").value = item.summary;
+  document.getElementById("edit-ref-content").value = item.content;
 
   modal.classList.remove("hidden");
   modal.classList.add("flex");
