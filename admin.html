@@ -206,51 +206,7 @@
 
       </div>
 
-      <!-- PHẦN 2: CÁC KHỐI RỘNG TOÀN MÀN HÌNH (LƯU TRỮ & THƯ VIỆN & TÀI LIỆU) -->
-      
-      <!-- Khối 1: Kho Lưu Trữ Tư Liệu Chi Bộ (Full Width) -->
-      <div class="mt-8 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
-        <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
-          <div class="flex items-center gap-2">
-            <span class="text-[#D62D20] text-xl">★</span>
-            <h3 class="text-lg font-bold text-gray-800">Kho Lưu Trữ Tư Liệu Chi Bộ</h3>
-          </div>
-          <button 
-            id="btn-refresh-archive"
-            class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
-          >
-            Tải lại kho lưu trữ
-          </button>
-        </div>
-        <p class="text-xs text-gray-500 mb-6">Danh mục toàn bộ các bài viết có trạng thái đã duyệt đăng (Approved) hoặc từ chối (Rejected). Ban quản trị có thể xem thông tin chi tiết, chỉnh sửa nội dung bài viết và phê duyệt lại một cách dễ dàng.</p>
-        
-        <div id="archive-contributions-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Load động bài lưu trữ qua JS -->
-        </div>
-      </div>
-
-      <!-- Khối 2: Danh sách sách trong tủ (Full Width / Sắp xếp dạng Grid đẹp mắt) -->
-      <div class="mt-8 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
-        <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
-          <div class="flex items-center gap-2">
-            <span class="text-[#D62D20] text-xl">★</span>
-            <h3 class="text-lg font-bold text-gray-800">Danh sách sách trong tủ (Quản lý thư viện số)</h3>
-          </div>
-          <button 
-            id="btn-refresh-books"
-            class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
-          >
-            Tải lại danh sách sách
-          </button>
-        </div>
-        <p class="text-xs text-gray-500 mb-6">Quản lý các tác phẩm, sách điện tử số hóa đang hiển thị công khai trên tủ sách của trang chủ. Hỗ trợ chỉnh sửa nội dung trích dẫn và xóa vĩnh viễn sách.</p>
-        
-        <div id="managed-books-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Load động sách qua JS -->
-        </div>
-      </div>
-
-      <!-- KHỐI 3 MỚI: TẠO TÀI LIỆU THAM KHẢO CHUYÊN ĐỀ (Full Width) -->
+      <!-- KHU VỰC TÁC VỤ PHÍA TRÊN: TẠO TÀI LIỆU THAM KHẢO (Full Width) -->
       <div class="mt-8 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
         <div class="flex items-center gap-2 mb-6 pb-3 border-b border-gray-100">
           <span class="text-[#FFD700] text-xl">★</span>
@@ -341,7 +297,51 @@
         </form>
       </div>
 
-      <!-- KHỐI 4 MỚI: QUẢN LÝ DANH SÁCH TÀI LIỆU THAM KHẢO (Full Width) -->
+      <!-- KHU VỰC QUẢN LÝ DANH SÁCH (Phía dưới) -->
+      
+      <!-- Khối 1: Kho Lưu Trữ Tư Liệu Chi Bộ (Full Width) -->
+      <div class="mt-8 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
+        <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
+          <div class="flex items-center gap-2">
+            <span class="text-[#D62D20] text-xl">★</span>
+            <h3 class="text-lg font-bold text-gray-800">Kho Lưu Trữ Tư Liệu Chi Bộ</h3>
+          </div>
+          <button 
+            id="btn-refresh-archive"
+            class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
+          >
+            Tải lại kho lưu trữ
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 mb-6">Danh mục toàn bộ các bài viết có trạng thái đã duyệt đăng (Approved) hoặc từ chối (Rejected). Ban quản trị có thể xem thông tin chi tiết, chỉnh sửa nội dung bài viết và phê duyệt lại một cách dễ dàng.</p>
+        
+        <div id="archive-contributions-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Load động bài lưu trữ qua JS -->
+        </div>
+      </div>
+
+      <!-- Khối 2: Danh sách sách trong tủ (Quản lý thư viện số) (Full Width) -->
+      <div class="mt-8 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
+        <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
+          <div class="flex items-center gap-2">
+            <span class="text-[#D62D20] text-xl">★</span>
+            <h3 class="text-lg font-bold text-gray-800">Danh sách sách trong tủ (Quản lý thư viện số)</h3>
+          </div>
+          <button 
+            id="btn-refresh-books"
+            class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
+          >
+            Tải lại danh sách sách
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 mb-6">Quản lý các tác phẩm, sách điện tử số hóa đang hiển thị công khai trên tủ sách của trang chủ. Hỗ trợ chỉnh sửa nội dung trích dẫn và xóa vĩnh viễn sách.</p>
+        
+        <div id="managed-books-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Load động sách qua JS -->
+        </div>
+      </div>
+
+      <!-- Khối 3: Quản lý Tài liệu Tham khảo đã đăng (Full Width) -->
       <div class="mt-8 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
         <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
           <div class="flex items-center gap-2">
