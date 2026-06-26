@@ -1,5 +1,8 @@
 import { getDigitalBooks, getApprovedContributions, addContribution } from './firebase-db.js';
 
+// Danh sách sách toàn cục
+let loadedBooks = [];
+
 // Dữ liệu triển lãm ảo 360°
 const EXHIBITION_DATA = {
   "ben-nha-rong": {
@@ -182,6 +185,9 @@ async function loadBooks() {
     `;
     const books = await getDigitalBooks();
     
+    // Lưu trữ vào danh sách toàn cục để tham chiếu
+    loadedBooks = books;
+    
     if (books.length === 0) {
       booksContainer.innerHTML = `
         <div class="col-span-full text-center text-gray-500 py-10">
@@ -204,9 +210,7 @@ async function loadBooks() {
         <div class="p-6 pt-0">
           <button 
             class="w-full py-2 px-4 bg-gray-50 hover:bg-[#FFD700] hover:text-[#D62D20] text-gray-700 font-semibold rounded-lg text-sm transition duration-300 border border-gray-100 flex items-center justify-center gap-2 cursor-pointer btn-read-book"
-            data-title="${book.bookTitle}"
-            data-author="${book.author}"
-            data-summary="${book.summary}"
+            data-id="${book.id}"
           >
             Đọc trích đoạn
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
@@ -219,10 +223,11 @@ async function loadBooks() {
     const readBtns = booksContainer.querySelectorAll(".btn-read-book");
     readBtns.forEach(btn => {
       btn.addEventListener("click", () => {
-        const title = btn.getAttribute("data-title");
-        const author = btn.getAttribute("data-author");
-        const summary = btn.getAttribute("data-summary");
-        openBookModal(title, author, summary);
+        const id = btn.getAttribute("data-id");
+        const book = loadedBooks.find(b => b.id === id);
+        if (book) {
+          openBookModal(book.bookTitle, book.author, book.summary);
+        }
       });
     });
 

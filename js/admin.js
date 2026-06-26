@@ -18,6 +18,22 @@ import {
   isSimulation 
 } from './firebase-db.js';
 
+// Bộ nhớ tạm lưu trữ dữ liệu đã tải trong phiên hoạt động của Admin
+let loadedBooks = [];
+let loadedContributions = [];
+let loadedReferences = [];
+
+function updateContributionsCache(list) {
+  list.forEach(item => {
+    const idx = loadedContributions.findIndex(c => c.id === item.id);
+    if (idx !== -1) {
+      loadedContributions[idx] = item;
+    } else {
+      loadedContributions.push(item);
+    }
+  });
+}
+
 // Khởi tạo và liên kết sự kiện khi trang đã tải
 function init() {
   initAdminAuth();
@@ -319,6 +335,7 @@ async function loadPendingContributions() {
     `;
 
     const pendingList = await getPendingContributions();
+    updateContributionsCache(pendingList);
 
     if (pendingList.length === 0) {
       pendingContainer.innerHTML = `
@@ -365,9 +382,6 @@ async function loadPendingContributions() {
             <button 
               class="py-2 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-edit-contrib"
               data-id="${item.id}"
-              data-title="${item.title}"
-              data-author="${item.authorName}"
-              data-status="${item.status}"
             >
               Sửa
             </button>
@@ -404,6 +418,7 @@ async function loadArchivedContributions() {
     `;
 
     const archivedList = await getArchivedContributions();
+    updateContributionsCache(archivedList);
 
     if (archivedList.length === 0) {
       archiveContainer.innerHTML = `
@@ -454,9 +469,6 @@ async function loadArchivedContributions() {
               <button 
                 class="py-2 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg text-xs transition duration-200 flex items-center justify-center gap-1 cursor-pointer btn-edit-contrib"
                 data-id="${item.id}"
-                data-title="${item.title}"
-                data-author="${item.authorName}"
-                data-status="${item.status}"
               >
                 Sửa
               </button>
@@ -529,14 +541,12 @@ function bindContributionActions(container) {
   container.querySelectorAll(".btn-edit-contrib").forEach(btn => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-id");
-      const title = btn.getAttribute("data-title");
-      const author = btn.getAttribute("data-author");
-      const status = btn.getAttribute("data-status");
-      
-      const textarea = document.getElementById(`pending-textarea-${id}`) || document.getElementById(`archive-textarea-${id}`);
-      const content = textarea ? textarea.value : "";
-      
-      openEditContribModal({ id, title, authorName: author, content, status });
+      const item = loadedContributions.find(c => c.id === id);
+      if (item) {
+        const textarea = document.getElementById(`pending-textarea-${id}`) || document.getElementById(`archive-textarea-${id}`);
+        const content = textarea ? textarea.value : item.content;
+        openEditContribModal({ id: item.id, title: item.title, authorName: item.authorName, content, status: item.status });
+      }
     });
   });
 }
@@ -591,6 +601,7 @@ async function loadBooks() {
     `;
 
     const booksList = await getDigitalBooks();
+    loadedBooks = booksList;
 
     if (booksList.length === 0) {
       booksContainer.innerHTML = `
@@ -610,9 +621,6 @@ async function loadBooks() {
           <button 
             class="flex-1 py-1.5 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg text-xs transition duration-150 cursor-pointer btn-edit-book"
             data-id="${book.id}"
-            data-title="${book.bookTitle}"
-            data-author="${book.author}"
-            data-summary="${book.summary}"
           >
             Sửa
           </button>
@@ -639,11 +647,10 @@ async function loadBooks() {
     booksContainer.querySelectorAll(".btn-edit-book").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = btn.getAttribute("data-id");
-        const title = btn.getAttribute("data-title");
-        const author = btn.getAttribute("data-author");
-        const summary = btn.getAttribute("data-summary");
-        
-        openEditBookModal({ id, bookTitle: title, author, summary });
+        const book = loadedBooks.find(b => b.id === id);
+        if (book) {
+          openEditBookModal({ id: book.id, bookTitle: book.bookTitle, author: book.author, summary: book.summary });
+        }
       });
     });
 
@@ -686,6 +693,7 @@ async function loadReferenceDocsAdmin() {
     `;
 
     const refsList = await getReferenceDocuments();
+    loadedReferences = refsList;
 
     if (refsList.length === 0) {
       refsContainer.innerHTML = `
@@ -710,12 +718,6 @@ async function loadReferenceDocsAdmin() {
             <button 
               class="flex-1 py-1.5 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg text-xs transition duration-150 cursor-pointer btn-edit-ref"
               data-id="${ref.id}"
-              data-title="${ref.title}"
-              data-author="${ref.author}"
-              data-image-url="${ref.imageUrl}"
-              data-video-url="${ref.videoUrl}"
-              data-summary="${ref.summary}"
-              data-content="${ref.content}"
             >
               Sửa
             </button>
@@ -744,14 +746,10 @@ async function loadReferenceDocsAdmin() {
     refsContainer.querySelectorAll(".btn-edit-ref").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = btn.getAttribute("data-id");
-        const title = btn.getAttribute("data-title");
-        const author = btn.getAttribute("data-author");
-        const imageUrl = btn.getAttribute("data-image-url");
-        const videoUrl = btn.getAttribute("data-video-url");
-        const summary = btn.getAttribute("data-summary");
-        const content = btn.getAttribute("data-content");
-        
-        openEditRefModal({ id, title, author, imageUrl, videoUrl, summary, content });
+        const ref = loadedReferences.find(r => r.id === id);
+        if (ref) {
+          openEditRefModal({ id: ref.id, title: ref.title, author: ref.author, imageUrl: ref.imageUrl, videoUrl: ref.videoUrl, summary: ref.summary, content: ref.content });
+        }
       });
     });
 
