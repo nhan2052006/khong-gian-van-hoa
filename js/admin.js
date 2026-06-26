@@ -89,7 +89,32 @@ function initAdminAuth() {
         loginForm.reset();
       } catch (error) {
         console.error("Đăng nhập thất bại:", error);
-        showError(error.message || "Tên đăng nhập hoặc mật khẩu không chính xác.");
+        let friendlyMsg = "Tên đăng nhập hoặc mật khẩu không chính xác.";
+        
+        if (error.code) {
+          switch (error.code) {
+            case "auth/invalid-credential":
+            case "auth/wrong-password":
+              friendlyMsg = "Sai tài khoản hoặc mật khẩu. Vui lòng kiểm tra lại!";
+              break;
+            case "auth/invalid-email":
+              friendlyMsg = "Định dạng Email không hợp lệ!";
+              break;
+            case "auth/user-not-found":
+              friendlyMsg = "Tài khoản này không tồn tại trên hệ thống!";
+              break;
+            default:
+              if (error.code.includes("invalid") || error.code.includes("credential") || error.code.includes("password")) {
+                friendlyMsg = "Sai tài khoản hoặc mật khẩu. Vui lòng kiểm tra lại!";
+              } else {
+                friendlyMsg = "Đã xảy ra lỗi hệ thống: " + error.message;
+              }
+          }
+        } else if (error.message) {
+          friendlyMsg = "Đã xảy ra lỗi hệ thống: " + error.message;
+        }
+        
+        showError(friendlyMsg);
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "Đăng nhập hệ thống";
