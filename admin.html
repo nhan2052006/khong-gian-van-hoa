@@ -120,24 +120,24 @@
       <!-- Lời chào & Chỉ dẫn -->
       <div class="mb-8">
         <h2 class="text-2xl font-black text-gray-800">Chào mừng đến với Ban quản trị Chi bộ!</h2>
-        <p class="text-sm text-gray-500 mt-1">Hệ thống quản lý không cần chạm code. Phê duyệt bài viết của quần chúng và cập nhật tủ sách số của Chi bộ.</p>
+        <p class="text-sm text-gray-500 mt-1">Đồng bộ dữ liệu thời gian thực. Chỉnh sửa và xóa trực tiếp các bài đóng góp của Đảng viên và tủ sách số.</p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- CỘT TRÁI: DỰ VÀ DUYỆT BÀI ĐÓNG GÓP (8/12 phần) -->
+        <!-- CỘT TRÁI: QUẢN LÝ BÀI ĐÓNG GÓP (7/12 phần) -->
         <div class="lg:col-span-7 space-y-6">
           <div class="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm">
             <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
               <div class="flex items-center gap-2">
                 <span class="text-[#D62D20] text-xl">★</span>
-                <h3 class="text-lg font-bold text-gray-800">Duyệt bài viết & Tư liệu mới</h3>
+                <h3 class="text-lg font-bold text-gray-800">Yêu cầu duyệt bài viết mới</h3>
               </div>
               <button 
                 onclick="window.location.reload()" 
                 class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
               >
-                Tải lại danh sách
+                Tải lại
               </button>
             </div>
 
@@ -148,15 +148,16 @@
           </div>
         </div>
 
-        <!-- CỘT PHẢI: THÊM SÁCH ĐIỆN TỬ (5/12 phần) -->
-        <div class="lg:col-span-5">
+        <!-- CỘT PHẢI: THÊM SÁCH & QUẢN LÝ TỦ SÁCH (5/12 phần) -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <!-- Phân hệ thêm sách -->
           <div class="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm">
             <div class="flex items-center gap-2 mb-6 pb-3 border-b border-gray-100">
               <span class="text-[#FFD700] text-xl">★</span>
               <h3 class="text-lg font-bold text-gray-800">Thêm sách mới vào Tủ sách số</h3>
             </div>
 
-            <!-- Form thêm sách -->
             <form id="add-book-form" class="space-y-4">
               <div>
                 <label for="book-title" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tên tác phẩm / Tên sách <span class="text-[#D62D20]">*</span></label>
@@ -183,7 +184,7 @@
                 <textarea 
                   id="book-summary" 
                   required 
-                  rows="6"
+                  rows="4"
                   placeholder="Nhập nội dung trích đoạn nổi bật để độc giả đọc thử..."
                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
                 ></textarea>
@@ -203,6 +204,27 @@
               </button>
             </form>
           </div>
+
+          <!-- PHÂN HỆ MỚI: QUẢN LÝ TỦ SÁCH SỐ -->
+          <div class="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm">
+            <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
+              <div class="flex items-center gap-2">
+                <span class="text-[#D62D20] text-xl">★</span>
+                <h3 class="text-lg font-bold text-gray-800">Danh sách sách trong tủ</h3>
+              </div>
+              <button 
+                id="btn-refresh-books"
+                class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
+              >
+                Tải lại
+              </button>
+            </div>
+            
+            <div id="managed-books-container" class="space-y-4 max-h-[480px] overflow-y-auto pr-1">
+              <!-- Load động sách qua JS -->
+            </div>
+          </div>
+
         </div>
 
       </div>
@@ -221,10 +243,10 @@
             Tải lại kho lưu trữ
           </button>
         </div>
-        <p class="text-xs text-gray-500 mb-6">Danh mục toàn bộ các bài viết có trạng thái đã duyệt đăng (Approved) hoặc từ chối (Rejected). Ban quản trị có thể chỉnh sửa văn bản trực tiếp trong ô và duyệt lại hoặc thu hồi bài viết bất kỳ lúc nào.</p>
+        <p class="text-xs text-gray-500 mb-6">Danh mục toàn bộ các bài viết có trạng thái đã duyệt đăng (Approved) hoặc từ chối (Rejected). Ban quản trị có thể xem thông tin chi tiết, chỉnh sửa nội dung bài viết và phê duyệt lại một cách dễ dàng.</p>
         
         <div id="archive-contributions-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Load động qua JS -->
+          <!-- Load động bài lưu trữ qua JS -->
         </div>
       </div>
 
@@ -235,9 +257,140 @@
   <footer class="bg-gray-100 border-t border-gray-200 py-6 px-4 mt-auto">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-2">
       <p>© 2026 Không Gian Văn Hóa Hồ Chí Minh. Ban Quản Trị Chi Bộ.</p>
-      <p>Trang quản trị an toàn kết nối qua Firebase Auth & Firestore Bridge.</p>
+      <p>Bảng điều khiển quản lý nâng cao kết nối trực tiếp Firebase Firestore.</p>
     </div>
   </footer>
+
+  <!-- ========================================== -->
+  <!-- MODAL CHỈNH SỬA TƯ LIỆU ĐÓNG GÓP (CONTRIB) -->
+  <!-- ========================================== -->
+  <div id="edit-contrib-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full flex flex-col shadow-2xl overflow-hidden border border-orange-50 animate-scale-up">
+      <div class="bg-[#D62D20] text-white p-5 relative border-b border-[#FFD700]/30 flex justify-between items-center">
+        <h3 class="text-lg font-bold">Chỉnh sửa bài đóng góp tư liệu</h3>
+        <button id="btn-close-edit-contrib" class="text-white hover:text-[#FFD700] text-2xl font-bold focus:outline-none cursor-pointer">&times;</button>
+      </div>
+      
+      <form id="edit-contrib-form" class="p-6 space-y-4">
+        <input type="hidden" id="edit-contrib-id">
+        <div>
+          <label for="edit-contrib-title" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tiêu đề bài viết <span class="text-[#D62D20]">*</span></label>
+          <input 
+            type="text" 
+            id="edit-contrib-title" 
+            required 
+            class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+          >
+        </div>
+        <div>
+          <label for="edit-contrib-author" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Người gửi / Tác giả</label>
+          <input 
+            type="text" 
+            id="edit-contrib-author" 
+            class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+          >
+        </div>
+        <div>
+          <label for="edit-contrib-content" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Nội dung cảm nhận <span class="text-[#D62D20]">*</span></label>
+          <textarea 
+            id="edit-contrib-content" 
+            required 
+            rows="5"
+            class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm resize-y"
+          ></textarea>
+        </div>
+        <div>
+          <label for="edit-contrib-status" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Trạng thái phê duyệt <span class="text-[#D62D20]">*</span></label>
+          <select 
+            id="edit-contrib-status" 
+            required 
+            class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm bg-white"
+          >
+            <option value="pending">Chờ duyệt (Pending)</option>
+            <option value="approved">Đã duyệt công khai (Approved)</option>
+            <option value="rejected">Từ chối (Rejected)</option>
+          </select>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">
+          <button 
+            type="button" 
+            id="btn-cancel-edit-contrib" 
+            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl text-xs cursor-pointer transition"
+          >
+            Hủy bỏ
+          </button>
+          <button 
+            type="submit" 
+            id="btn-save-edit-contrib" 
+            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs cursor-pointer transition"
+          >
+            Lưu thay đổi
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL CHỈNH SỬA THÔNG TIN SÁCH (BOOK) -->
+  <!-- ========================================== -->
+  <div id="edit-book-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full flex flex-col shadow-2xl overflow-hidden border border-orange-50 animate-scale-up">
+      <div class="bg-[#D62D20] text-white p-5 relative border-b border-[#FFD700]/30 flex justify-between items-center">
+        <h3 class="text-lg font-bold">Chỉnh sửa thông tin tác phẩm</h3>
+        <button id="btn-close-edit-book" class="text-white hover:text-[#FFD700] text-2xl font-bold focus:outline-none cursor-pointer">&times;</button>
+      </div>
+      
+      <form id="edit-book-form" class="p-6 space-y-4">
+        <input type="hidden" id="edit-book-id">
+        <div>
+          <label for="edit-book-title" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tên tác phẩm / Tên sách <span class="text-[#D62D20]">*</span></label>
+          <input 
+            type="text" 
+            id="edit-book-title" 
+            required 
+            class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+          >
+        </div>
+        <div>
+          <label for="edit-book-author" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tác giả <span class="text-[#D62D20]">*</span></label>
+          <input 
+            type="text" 
+            id="edit-book-author" 
+            required 
+            class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+          >
+        </div>
+        <div>
+          <label for="edit-book-summary" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tóm tắt / Trích đoạn đọc thử <span class="text-[#D62D20]">*</span></label>
+          <textarea 
+            id="edit-book-summary" 
+            required 
+            rows="5"
+            class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm resize-y"
+          ></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">
+          <button 
+            type="button" 
+            id="btn-cancel-edit-book" 
+            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl text-xs cursor-pointer transition"
+          >
+            Hủy bỏ
+          </button>
+          <button 
+            type="submit" 
+            id="btn-save-edit-book" 
+            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs cursor-pointer transition"
+          >
+            Lưu thay đổi
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- Admin Main Logic script -->
   <script type="module" src="js/admin.js"></script>
