@@ -120,117 +120,93 @@
       <!-- Lời chào & Chỉ dẫn -->
       <div class="mb-8">
         <h2 class="text-2xl font-black text-gray-800">Chào mừng đến với Ban quản trị Chi bộ!</h2>
-        <p class="text-sm text-gray-500 mt-1">Đồng bộ dữ liệu thời gian thực. Chỉnh sửa và xóa trực tiếp các bài đóng góp của Đảng viên và tủ sách số.</p>
+        <p class="text-sm text-gray-500 mt-1">Đồng bộ dữ liệu thời gian thực. Bố cục trực quan phân tách rõ nhiệm vụ duyệt bài, thêm sách và lưu trữ.</p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- PHẦN 1: GRID 2 CỘT (NHẬP LIỆU & DUYỆT BÀI MỚI) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         
-        <!-- CỘT TRÁI: QUẢN LÝ BÀI ĐÓNG GÓP (7/12 phần) -->
-        <div class="lg:col-span-7 space-y-6">
-          <div class="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm">
-            <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
-              <div class="flex items-center gap-2">
-                <span class="text-[#D62D20] text-xl">★</span>
-                <h3 class="text-lg font-bold text-gray-800">Yêu cầu duyệt bài viết mới</h3>
-              </div>
-              <button 
-                onclick="window.location.reload()" 
-                class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
-              >
-                Tải lại
-              </button>
+        <!-- Khối bên trái: Yêu cầu duyệt bài viết mới -->
+        <div class="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm h-full">
+          <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
+            <div class="flex items-center gap-2">
+              <span class="text-[#D62D20] text-xl">★</span>
+              <h3 class="text-lg font-bold text-gray-800">Yêu cầu duyệt bài viết mới</h3>
             </div>
+            <button 
+              onclick="window.location.reload()" 
+              class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
+            >
+              Tải lại
+            </button>
+          </div>
 
-            <!-- Danh sách bài chờ duyệt -->
-            <div id="pending-contributions-container" class="space-y-4">
-              <!-- Load động qua JS -->
-            </div>
+          <!-- Danh sách bài chờ duyệt -->
+          <div id="pending-contributions-container" class="space-y-4 max-h-[500px] overflow-y-auto pr-1">
+            <!-- Load động qua JS -->
           </div>
         </div>
 
-        <!-- CỘT PHẢI: THÊM SÁCH & QUẢN LÝ TỦ SÁCH (5/12 phần) -->
-        <div class="lg:col-span-5 space-y-6">
-          
-          <!-- Phân hệ thêm sách -->
-          <div class="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm">
-            <div class="flex items-center gap-2 mb-6 pb-3 border-b border-gray-100">
-              <span class="text-[#FFD700] text-xl">★</span>
-              <h3 class="text-lg font-bold text-gray-800">Thêm sách mới vào Tủ sách số</h3>
-            </div>
-
-            <form id="add-book-form" class="space-y-4">
-              <div>
-                <label for="book-title" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tên tác phẩm / Tên sách <span class="text-[#D62D20]">*</span></label>
-                <input 
-                  type="text" 
-                  id="book-title" 
-                  required 
-                  placeholder="Ví dụ: Lời kêu gọi toàn quốc kháng chiến..."
-                  class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
-                >
-              </div>
-              <div>
-                <label for="book-author" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tác giả <span class="text-[#D62D20]">*</span></label>
-                <input 
-                  type="text" 
-                  id="book-author" 
-                  required 
-                  placeholder="Ví dụ: Hồ Chí Minh"
-                  class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
-                >
-              </div>
-              <div>
-                <label for="book-summary" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Nội dung tóm tắt / Trích đoạn đọc thử <span class="text-[#D62D20]">*</span></label>
-                <textarea 
-                  id="book-summary" 
-                  required 
-                  rows="4"
-                  placeholder="Nhập nội dung trích đoạn nổi bật để độc giả đọc thử..."
-                  class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
-                ></textarea>
-              </div>
-
-              <!-- Thông báo sách thêm thành công -->
-              <div id="book-success-alert" class="hidden text-xs text-emerald-700 font-bold bg-emerald-50 p-3 rounded-lg border border-emerald-100">
-                Thêm tác phẩm mới vào Tủ sách thành công! Độc giả trang chủ đã có thể xem ngay.
-              </div>
-
-              <button 
-                type="submit" 
-                id="btn-submit-book" 
-                class="w-full btn-patriot-yellow py-3 rounded-xl font-bold text-sm shadow-md cursor-pointer flex items-center justify-center gap-2"
-              >
-                Thêm vào tủ sách
-              </button>
-            </form>
+        <!-- Khối bên phải: Thêm sách mới vào Tủ sách số -->
+        <div class="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm h-full">
+          <div class="flex items-center gap-2 mb-6 pb-3 border-b border-gray-100">
+            <span class="text-[#FFD700] text-xl">★</span>
+            <h3 class="text-lg font-bold text-gray-800">Thêm sách mới vào Tủ sách số</h3>
           </div>
 
-          <!-- PHÂN HỆ MỚI: QUẢN LÝ TỦ SÁCH SỐ -->
-          <div class="bg-white rounded-3xl p-6 border border-gray-150 shadow-sm">
-            <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
-              <div class="flex items-center gap-2">
-                <span class="text-[#D62D20] text-xl">★</span>
-                <h3 class="text-lg font-bold text-gray-800">Danh sách sách trong tủ</h3>
-              </div>
-              <button 
-                id="btn-refresh-books"
-                class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
+          <form id="add-book-form" class="space-y-4">
+            <div>
+              <label for="book-title" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tên tác phẩm / Tên sách <span class="text-[#D62D20]">*</span></label>
+              <input 
+                type="text" 
+                id="book-title" 
+                required 
+                placeholder="Ví dụ: Lời kêu gọi toàn quốc kháng chiến..."
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
               >
-                Tải lại
-              </button>
             </div>
-            
-            <div id="managed-books-container" class="space-y-4 max-h-[480px] overflow-y-auto pr-1">
-              <!-- Load động sách qua JS -->
+            <div>
+              <label for="book-author" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tác giả <span class="text-[#D62D20]">*</span></label>
+              <input 
+                type="text" 
+                id="book-author" 
+                required 
+                placeholder="Ví dụ: Hồ Chí Minh"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm"
+              >
             </div>
-          </div>
+            <div>
+              <label for="book-summary" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Nội dung tóm tắt / Trích đoạn đọc thử <span class="text-[#D62D20]">*</span></label>
+              <textarea 
+                id="book-summary" 
+                required 
+                rows="5"
+                placeholder="Nhập nội dung trích đoạn nổi bật để độc giả đọc thử..."
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] transition duration-150 text-sm resize-y"
+              ></textarea>
+            </div>
 
+            <!-- Thông báo sách thêm thành công -->
+            <div id="book-success-alert" class="hidden text-xs text-emerald-700 font-bold bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+              Thêm tác phẩm mới vào Tủ sách thành công! Độc giả trang chủ đã có thể xem ngay.
+            </div>
+
+            <button 
+              type="submit" 
+              id="btn-submit-book" 
+              class="w-full btn-patriot-yellow py-3 rounded-xl font-bold text-sm shadow-md cursor-pointer flex items-center justify-center gap-2"
+            >
+              Thêm vào tủ sách
+            </button>
+          </form>
         </div>
 
       </div>
 
-      <!-- KHO LƯU TRỮ TƯ LIỆU CHI BỘ -->
-      <div class="mt-12 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
+      <!-- PHẦN 2: CÁC KHỐI RỘNG TOÀN MÀN HÌNH (LƯU TRỮ & THƯ VIỆN) -->
+      
+      <!-- Khối 1: Kho Lưu Trữ Tư Liệu Chi Bộ (Full Width) -->
+      <div class="mt-8 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
         <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
           <div class="flex items-center gap-2">
             <span class="text-[#D62D20] text-xl">★</span>
@@ -247,6 +223,27 @@
         
         <div id="archive-contributions-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Load động bài lưu trữ qua JS -->
+        </div>
+      </div>
+
+      <!-- Khối 2: Danh sách sách trong tủ (Full Width / Sắp xếp dạng Grid đẹp mắt) -->
+      <div class="mt-8 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
+        <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
+          <div class="flex items-center gap-2">
+            <span class="text-[#D62D20] text-xl">★</span>
+            <h3 class="text-lg font-bold text-gray-800">Danh sách sách trong tủ (Quản lý thư viện số)</h3>
+          </div>
+          <button 
+            id="btn-refresh-books"
+            class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
+          >
+            Tải lại danh sách sách
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 mb-6">Quản lý các tác phẩm, sách điện tử số hóa đang hiển thị công khai trên tủ sách của trang chủ. Hỗ trợ chỉnh sửa nội dung trích dẫn và xóa vĩnh viễn sách.</p>
+        
+        <div id="managed-books-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Load động sách qua JS -->
         </div>
       </div>
 
