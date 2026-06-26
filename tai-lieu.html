@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tài Liệu Tham Khảo - Không Gian Văn Hóa Hồ Chí Minh</title>
+  <meta name="description" content="Kênh thông tin tra cứu tài liệu học tập, văn kiện lý luận chuyên sâu phục vụ Chi bộ Đảng cơ sở.">
+  
+  <!-- Tailwind CSS v4 Play CDN -->
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  
+  <!-- Custom Style Sheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#FDFCFA] text-gray-800 flex flex-col min-h-screen">
+
+  <!-- NAVIGATION BAR -->
+  <nav class="sticky top-0 z-50 bg-[#D62D20] text-white shadow-md border-b border-[#FFD700]/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-[#FFD700] rounded-full flex items-center justify-center star-glow shadow">
+            <span class="text-[#D62D20] text-2xl font-bold">★</span>
+          </div>
+          <div>
+            <span class="block text-base font-extrabold tracking-wide uppercase">Không Gian Văn Hóa</span>
+            <span class="block text-xs font-semibold text-[#FFD700] tracking-wider uppercase">HỒ CHÍ MINH</span>
+          </div>
+        </div>
+        
+        <!-- Navigation Links (Desktop) -->
+        <div class="hidden md:flex items-center space-x-6">
+          <a href="index.html" class="text-white hover:text-[#FFD700] font-bold text-sm transition duration-150">Trang chủ</a>
+          <a href="index.html#heritage-timeline" class="text-white hover:text-[#FFD700] font-bold text-sm transition duration-150">Hành trình di sản</a>
+          <a href="index.html#digital-library" class="text-white hover:text-[#FFD700] font-bold text-sm transition duration-150">Tủ sách số</a>
+          <a href="tai-lieu.html" class="text-[#FFD700] font-bold text-sm transition duration-150">Tài liệu tham khảo</a>
+          <a href="index.html#contribution" class="text-white hover:text-[#FFD700] font-bold text-sm transition duration-150">Gửi đóng góp</a>
+          <a href="admin.html" class="btn-patriot-yellow py-1.5 px-4 rounded-lg text-xs flex items-center gap-1.5 shadow-sm">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            Quản trị viên
+          </a>
+        </div>
+        
+        <div class="md:hidden flex items-center">
+          <a href="admin.html" class="btn-patriot-yellow py-1 px-3 rounded-lg text-xs font-bold shadow-sm">
+            Admin
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LIST VIEW (MẶC ĐỊNH HIỂN THỊ DANH SÁCH TÀI LIỆU) -->
+  <main id="references-list-view" class="flex-1 py-12 px-4 max-w-7xl mx-auto w-full">
+    <div class="text-center mb-12">
+      <span class="text-[#D62D20] font-extrabold text-sm tracking-widest uppercase block mb-1">Học tập và tra cứu</span>
+      <h2 class="text-2xl md:text-4xl font-black text-gray-800 uppercase">Kho Tài Liệu Tham Khảo Chuyên Đề</h2>
+      <div class="w-24 h-1 bg-[#D62D20] mx-auto mt-3 rounded-full"></div>
+      <p class="text-gray-500 text-sm mt-4 max-w-xl mx-auto">
+        Tổng hợp các bài viết nghiên cứu, hướng dẫn lý luận và video tư liệu chuyên sâu phục vụ công tác xây dựng Đảng của Chi bộ.
+      </p>
+    </div>
+
+    <!-- Container kết xuất danh sách -->
+    <div id="references-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mt-8">
+      <!-- Load động qua JS -->
+    </div>
+  </main>
+
+  <!-- DETAIL VIEW (XEM CHI TIẾT FULL PAGE - MẶC ĐỊNH ẨN) -->
+  <main id="reference-detail-view" class="flex-1 py-12 px-4 max-w-4xl mx-auto w-full hidden">
+    <!-- Nút quay lại -->
+    <div class="mb-6">
+      <button 
+        id="btn-back-to-list" 
+        class="btn-patriot-secondary py-2 px-5 rounded-xl font-bold text-xs flex items-center gap-1.5 cursor-pointer"
+      >
+        ← Quay lại danh sách tài liệu
+      </button>
+    </div>
+
+    <!-- Khung hiển thị chi tiết nội dung -->
+    <article class="bg-white rounded-3xl border border-gray-150 p-6 md:p-10 shadow-lg relative overflow-hidden">
+      <!-- Banner trang trí góc -->
+      <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#FFD700]/10 to-transparent pointer-events-none"></div>
+
+      <header class="border-b border-gray-100 pb-6 mb-6">
+        <h1 id="detail-title" class="text-2xl md:text-3xl font-black text-gray-800 leading-tight mb-4">Tiêu đề tài liệu chi tiết</h1>
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-500 font-medium">
+          <span class="flex items-center gap-1 text-[#D62D20] bg-red-50 px-2.5 py-1 rounded-md">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+            Người đăng: <strong id="detail-author">Ban biên tập</strong>
+          </span>
+          <span class="flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            Ngày đăng: <span id="detail-date">--/--/----</span>
+          </span>
+        </div>
+      </header>
+
+      <!-- Hình ảnh đính kèm lớn -->
+      <div id="detail-image-container" class="mb-8 rounded-2xl overflow-hidden bg-gray-100 hidden shadow-md">
+        <img id="detail-image" src="" alt="Hình ảnh tài liệu" class="w-full h-auto object-cover max-h-[450px]">
+      </div>
+
+      <!-- Trích đoạn summary nổi bật -->
+      <p id="detail-summary" class="text-base text-gray-700 font-bold border-l-4 border-[#FFD700] pl-4 italic mb-8 leading-relaxed">
+        Nội dung tóm tắt...
+      </p>
+
+      <!-- Nội dung văn bản chi tiết -->
+      <div id="detail-content" class="text-gray-700 leading-relaxed text-sm whitespace-pre-line mb-10 space-y-4">
+        Nội dung chi tiết...
+      </div>
+
+      <!-- Trình phát Video nhúng (Iframe) -->
+      <div id="detail-video-container" class="mt-10 border-t border-gray-100 pt-8 hidden">
+        <h4 class="text-xs font-extrabold uppercase text-gray-500 tracking-wider mb-4 flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-[#D62D20]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l-6 4V6l6 4z"></path></svg>
+          Video hướng dẫn học tập / Minh họa:
+        </h4>
+        <div class="bg-red-50/50 p-2.5 sm:p-4 rounded-2xl border-2 border-[#FFD700] shadow-md relative overflow-hidden max-w-3xl mx-auto">
+          <div class="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-inner">
+            <iframe 
+              id="detail-video-iframe"
+              src="" 
+              class="w-full h-full border-none"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto bg-[#D62D20] text-white border-t-4 border-[#FFD700] py-8 px-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-red-200 gap-4">
+      <p>© 2026 Không Gian Văn Hóa Hồ Chí Minh. Ban biên tập tài liệu lý luận Chi bộ.</p>
+      <div class="flex gap-4 font-semibold text-white">
+        <a href="index.html" class="hover:text-[#FFD700]">Trang chủ</a>
+        <a href="tai-lieu.html" class="hover:text-[#FFD700]">Tài liệu tham khảo</a>
+        <a href="admin.html" class="hover:text-[#FFD700]">Trang quản trị</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script điều khiển chính -->
+  <script type="module" src="js/tai-lieu.js"></script>
+</body>
+</html>

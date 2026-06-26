@@ -101,6 +101,9 @@
           </div>
         </div>
         <div class="flex items-center gap-4">
+          <a href="tai-lieu.html" target="_blank" class="text-white hover:text-[#FFD700] font-bold text-xs bg-white/10 px-3.5 py-2 rounded-lg transition">
+            Tài liệu tham khảo ↗
+          </a>
           <a href="index.html" target="_blank" class="text-white hover:text-[#FFD700] font-bold text-xs bg-white/10 px-3.5 py-2 rounded-lg transition">
             Xem Trang Chủ ↗
           </a>
@@ -203,7 +206,7 @@
 
       </div>
 
-      <!-- PHẦN 2: CÁC KHỐI RỘNG TOÀN MÀN HÌNH (LƯU TRỮ & THƯ VIỆN) -->
+      <!-- PHẦN 2: CÁC KHỐI RỘNG TOÀN MÀN HÌNH (LƯU TRỮ & THƯ VIỆN & TÀI LIỆU) -->
       
       <!-- Khối 1: Kho Lưu Trữ Tư Liệu Chi Bộ (Full Width) -->
       <div class="mt-8 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
@@ -244,6 +247,117 @@
         
         <div id="managed-books-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Load động sách qua JS -->
+        </div>
+      </div>
+
+      <!-- KHỐI 3 MỚI: TẠO TÀI LIỆU THAM KHẢO CHUYÊN ĐỀ (Full Width) -->
+      <div class="mt-8 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
+        <div class="flex items-center gap-2 mb-6 pb-3 border-b border-gray-100">
+          <span class="text-[#FFD700] text-xl">★</span>
+          <h3 class="text-lg font-bold text-gray-800">Tạo Tài liệu Tham khảo Chuyên đề mới</h3>
+        </div>
+        
+        <form id="add-ref-form" class="space-y-4 max-w-4xl">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="ref-title" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tiêu đề tài liệu <span class="text-[#D62D20]">*</span></label>
+              <input 
+                type="text" 
+                id="ref-title" 
+                required 
+                placeholder="Ví dụ: Tư tưởng Hồ Chí Minh về xây dựng Đảng..."
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+              >
+            </div>
+            <div>
+              <label for="ref-author" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Người đăng / Tổ chức <span class="text-[#D62D20]">*</span></label>
+              <input 
+                type="text" 
+                id="ref-author" 
+                required 
+                placeholder="Ví dụ: Ban Tuyên giáo Chi bộ"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+              >
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="ref-image-url" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Đường dẫn hình ảnh minh họa (Image URL)</label>
+              <input 
+                type="url" 
+                id="ref-image-url" 
+                placeholder="Ví dụ: https://images.unsplash.com/photo-..."
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+              >
+            </div>
+            <div>
+              <label for="ref-video-url" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Đường dẫn video tư liệu (YouTube Video URL)</label>
+              <input 
+                type="url" 
+                id="ref-video-url" 
+                placeholder="Ví dụ: https://www.youtube.com/watch?v=..."
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+              >
+            </div>
+          </div>
+
+          <div>
+            <label for="ref-summary" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Nội dung tóm tắt ngắn <span class="text-[#D62D20]">*</span></label>
+            <input 
+              type="text" 
+              id="ref-summary" 
+              required 
+              placeholder="Nhập đoạn giới thiệu ngắn hiển thị ngoài danh sách tài liệu..."
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+            >
+          </div>
+
+          <div>
+            <label for="ref-content" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Nội dung văn bản chi tiết <span class="text-[#D62D20]">*</span></label>
+            <textarea 
+              id="ref-content" 
+              required 
+              rows="6"
+              placeholder="Nhập nội dung chi tiết của tài liệu học tập chuyên đề..."
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm resize-y"
+            ></textarea>
+          </div>
+
+          <!-- Thông báo tài liệu thêm thành công -->
+          <div id="ref-success-alert" class="hidden text-xs text-emerald-700 font-bold bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+            Tạo tài liệu tham khảo mới thành công! Đảng viên có thể tra cứu ngay ngoài trang Tài liệu.
+          </div>
+
+          <div class="flex justify-end">
+            <button 
+              type="submit" 
+              id="btn-submit-ref" 
+              class="btn-patriot-primary py-3 px-8 rounded-xl font-bold text-sm shadow-md cursor-pointer flex items-center justify-center gap-2"
+            >
+              Tạo tài liệu mới
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- KHỐI 4 MỚI: QUẢN LÝ DANH SÁCH TÀI LIỆU THAM KHẢO (Full Width) -->
+      <div class="mt-8 bg-white rounded-3xl p-6 md:p-8 border border-gray-150 shadow-sm">
+        <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-100">
+          <div class="flex items-center gap-2">
+            <span class="text-[#D62D20] text-xl">★</span>
+            <h3 class="text-lg font-bold text-gray-800">Quản lý Tài liệu Tham khảo đã đăng</h3>
+          </div>
+          <button 
+            id="btn-refresh-refs"
+            class="text-xs font-bold text-[#D62D20] hover:underline cursor-pointer"
+          >
+            Tải lại danh sách
+          </button>
+        </div>
+        
+        <div id="managed-references-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Load động tài liệu qua JS -->
         </div>
       </div>
 
@@ -380,6 +494,98 @@
           <button 
             type="submit" 
             id="btn-save-edit-book" 
+            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs cursor-pointer transition"
+          >
+            Lưu thay đổi
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL CHỈNH SỬA TÀI LIỆU THAM KHẢO (REF) -->
+  <!-- ========================================== -->
+  <div id="edit-ref-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full flex flex-col shadow-2xl overflow-hidden border border-orange-50 animate-scale-up">
+      <div class="bg-[#D62D20] text-white p-5 relative border-b border-[#FFD700]/30 flex justify-between items-center">
+        <h3 class="text-lg font-bold">Chỉnh sửa tài liệu tham khảo</h3>
+        <button id="btn-close-edit-ref" class="text-white hover:text-[#FFD700] text-2xl font-bold focus:outline-none cursor-pointer">&times;</button>
+      </div>
+      
+      <form id="edit-ref-form" class="p-6 space-y-4 overflow-y-auto max-h-[75vh]">
+        <input type="hidden" id="edit-ref-id">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="edit-ref-title" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Tiêu đề tài liệu <span class="text-[#D62D20]">*</span></label>
+            <input 
+              type="text" 
+              id="edit-ref-title" 
+              required 
+              class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+            >
+          </div>
+          <div>
+            <label for="edit-ref-author" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Người đăng <span class="text-[#D62D20]">*</span></label>
+            <input 
+              type="text" 
+              id="edit-ref-author" 
+              required 
+              class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+            >
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="edit-ref-image-url" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Link hình ảnh minh họa</label>
+            <input 
+              type="url" 
+              id="edit-ref-image-url" 
+              class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+            >
+          </div>
+          <div>
+            <label for="edit-ref-video-url" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Link video minh họa (YouTube)</label>
+            <input 
+              type="url" 
+              id="edit-ref-video-url" 
+              class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+            >
+          </div>
+        </div>
+
+        <div>
+          <label for="edit-ref-summary" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Nội dung tóm tắt ngắn <span class="text-[#D62D20]">*</span></label>
+          <input 
+            type="text" 
+            id="edit-ref-summary" 
+            required 
+            class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm"
+          >
+        </div>
+
+        <div>
+          <label for="edit-ref-content" class="block text-xs font-extrabold uppercase text-gray-500 mb-1">Nội dung văn bản chi tiết <span class="text-[#D62D20]">*</span></label>
+          <textarea 
+            id="edit-ref-content" 
+            required 
+            rows="5"
+            class="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D62D20]/20 focus:border-[#D62D20] text-sm resize-y"
+          ></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">
+          <button 
+            type="button" 
+            id="btn-cancel-edit-ref" 
+            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl text-xs cursor-pointer transition"
+          >
+            Hủy bỏ
+          </button>
+          <button 
+            type="submit" 
+            id="btn-save-edit-ref" 
             class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs cursor-pointer transition"
           >
             Lưu thay đổi
