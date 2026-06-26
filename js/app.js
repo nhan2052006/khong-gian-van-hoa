@@ -250,7 +250,7 @@ function openBookModal(title, author, summary) {
   document.body.classList.add("overflow-hidden");
 }
 
-// 3. Sổ vàng công khai
+// 3. Đề xuất, đóng góp công khai
 async function loadApprovedContributions() {
   const goldenBookContainer = document.getElementById("golden-book-container");
   if (!goldenBookContainer) return;
@@ -296,7 +296,7 @@ async function loadApprovedContributions() {
       </div>
     `;
   } catch (error) {
-    console.error("Lỗi khi tải Sổ vàng:", error);
+    console.error("Lỗi khi tải đề xuất, đóng góp:", error);
     goldenBookContainer.innerHTML = `<div class="text-center text-red-600 py-10">Lỗi khi kết nối dữ liệu.</div>`;
   }
 }
@@ -342,7 +342,7 @@ function initContributionForm() {
           toast.classList.add("hidden");
         }, 5000);
       } else {
-        alert("Gửi bài viết về Chi bộ thành công! Bài viết của bạn sẽ được hiển thị trên Sổ vàng công khai sau khi Ban quản trị duyệt.");
+        alert("Gửi bài viết về Chi bộ thành công! Bài viết của bạn sẽ được hiển thị trên Đề xuất, đóng góp công khai sau khi Ban quản trị duyệt.");
       }
 
     } catch (error) {
